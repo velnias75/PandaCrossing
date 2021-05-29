@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "panda_crossing",
+  "version": "${version}",
+
+  "name": "Panda Crossing QR Generator",
+  "description": "Creates QR codes",
+  "authors": [
+    "Velnias75"
+  ],
+  "contact": {
+    "discord": "https://discord.me/agoramc",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+
+  "license": "GPL-3.0-or-later",
+  "icon": "assets/panda_crossing/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "de.rangun.pandacrossing.PandaCrossingMod"
+    ]
+  },
+  "mixins": [
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.16.x"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
