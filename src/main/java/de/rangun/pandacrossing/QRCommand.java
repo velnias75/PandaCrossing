@@ -20,8 +20,10 @@
 package de.rangun.pandacrossing;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
+import static net.minecraft.block.Blocks.BLACK_CONCRETE;
+import static net.minecraft.block.Blocks.WHITE_CONCRETE;
+import static net.minecraft.util.registry.Registry.BLOCK;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,17 +41,15 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.Registry;
 
 final class QRCommand implements Command<FabricClientCommandSource> {
 
-	private final static String BLACK_CONCRETE_ID = Registry.BLOCK.getId(Blocks.BLACK_CONCRETE).toString();
-	private final static String WHITE_CONCRETE_ID = Registry.BLOCK.getId(Blocks.WHITE_CONCRETE).toString();
+	private final static String BLACK_CONCRETE_ID = BLOCK.getId(BLACK_CONCRETE).toString();
+	private final static String WHITE_CONCRETE_ID = BLOCK.getId(WHITE_CONCRETE).toString();
 
 	private interface IBlockTraverser {
 		void traverse(int x, int y, boolean b);
@@ -68,8 +68,7 @@ final class QRCommand implements Command<FabricClientCommandSource> {
 				1, 1, hintMap);
 	}
 
-	private static void traverseQRCode(IBlockTraverser traverser, BitMatrix matrix)
-			throws WriterException, UnsupportedEncodingException {
+	private static void traverseQRCode(IBlockTraverser traverser, BitMatrix matrix) {
 
 		for (int y = 0; y < matrix.getHeight(); ++y) {
 			for (int x = 0; x < matrix.getWidth(); ++x) {

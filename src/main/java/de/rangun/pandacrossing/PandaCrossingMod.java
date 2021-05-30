@@ -20,17 +20,17 @@
 package de.rangun.pandacrossing;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
+import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.DISPATCHER;
 import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.literal;
 
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.api.ClientModInitializer;;
 
 public class PandaCrossingMod implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		ClientCommandManager.DISPATCHER.register(literal("qr")
+		DISPATCHER.register(literal("qr")
 				.requires(source -> (source.getPlayer().isCreative() || source.hasPermissionLevel(4)))
 				.then(argument("text", greedyString()).executes(new QRCommand())).executes(new QRCommandUsage()));
 	}
