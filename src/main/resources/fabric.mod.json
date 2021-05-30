@@ -3,20 +3,20 @@
   "id": "panda_crossing",
   "version": "${version}",
 
-  "name": "Panda Crossing QR Generator",
+  "name": "Panda Crossing QR Code Generator",
   "description": "Creates QR codes",
   "authors": [
     "Velnias75"
   ],
   "contact": {
-    "discord": "https://discord.me/agoramc",
+    "issues": "https://github.com/velnias75/PandaCrossing/issues",
     "sources": "https://github.com/velnias75/PandaCrossing"
   },
 
   "license": "GPL-3.0-or-later",
   "icon": "assets/panda_crossing/icon.png",
 
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "client": [
       "de.rangun.pandacrossing.PandaCrossingMod"
@@ -32,5 +32,12 @@
   },
   "suggests": {
     "another-mod": "*"
-  }
+  },
+  "custom": {
+    "modmenu": {
+        "links": {
+            "modmenu.discord": "https://discord.me/agoramc"
+        }
+    }
+}
 }
