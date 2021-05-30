@@ -25,7 +25,9 @@ import static net.minecraft.block.Blocks.WHITE_CONCRETE;
 import static net.minecraft.util.registry.Registry.BLOCK;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.zxing.BarcodeFormat;
@@ -35,13 +37,12 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.mojang.brigadier.Command;
-import com.mojang.brigadier.Message;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
@@ -54,6 +55,16 @@ final class QRCommand implements Command<FabricClientCommandSource> {
 	private interface IBlockTraverser {
 		void traverse(int x, int y, boolean b);
 	};
+
+	public interface IQRCommandAsyncListener {
+		public void IQRCommandFinished(CommandContext<FabricClientCommandSource> ctx);
+	}
+
+	private final List<IQRCommandAsyncListener> listener = new ArrayList<>();
+
+	QRCommand(IQRCommandAsyncListener l) {
+		listener.add(l);
+	}
 
 	private static BitMatrix createQRCodeBitMatrix(String qrCodeData) throws WriterException {
 
@@ -86,50 +97,52 @@ final class QRCommand implements Command<FabricClientCommandSource> {
 		final Vec3d playerPos = player.getPos();
 		final BlockPos curPos = new BlockPos(playerPos.getX(), playerPos.getY() - 1.0d, playerPos.getZ());
 
-		try {
+		Runnable task = () -> {
 
-			final BitMatrix matrix = createQRCodeBitMatrix(txt);
-			final Direction facing = player.getHorizontalFacing();
+			try {
 
-			// place the QR Code
-			traverseQRCode(new IBlockTraverser() {
+				final BitMatrix matrix = createQRCodeBitMatrix(txt);
+				final Direction facing = player.getHorizontalFacing();
 
-				@Override
-				public void traverse(int x, int y, boolean b) {
+				// place the QR Code
+				traverseQRCode(new IBlockTraverser() {
 
-					final BlockPos nextPos;
+					@Override
+					public void traverse(int x, int y, boolean b) {
 
-					switch (facing) {
-					case WEST:
-						nextPos = curPos.add(y * -1, 0, x * -1);
-						break;
-					case EAST:
-						nextPos = curPos.add(y, 0, x);
-						break;
-					case NORTH:
-						nextPos = curPos.add(x, 0, y * -1);
-						break;
-					default:
-						nextPos = curPos.add(x * -1, 0, y);
-						break;
+						final BlockPos nextPos;
+
+						switch (facing) {
+						case WEST:
+							nextPos = curPos.add(y * -1, 0, x * -1);
+							break;
+						case EAST:
+							nextPos = curPos.add(y, 0, x);
+							break;
+						case NORTH:
+							nextPos = curPos.add(x, 0, y * -1);
+							break;
+						default:
+							nextPos = curPos.add(x * -1, 0, y);
+							break;
+						}
+
+						player.sendChatMessage("/setblock " + nextPos.getX() + " " + nextPos.getY() + " "
+								+ nextPos.getZ() + " " + (b ? BLACK_CONCRETE_ID : WHITE_CONCRETE_ID) + " replace");
 					}
 
-					player.sendChatMessage("/setblock " + nextPos.getX() + " " + nextPos.getY() + " " + nextPos.getZ()
-							+ " " + (b ? BLACK_CONCRETE_ID : WHITE_CONCRETE_ID) + " replace");
-				}
+				}, matrix);
 
-			}, matrix);
-//			}
+			} catch (Exception e) {
+				ctx.getSource().sendFeedback(new LiteralText(e.getMessage()));
+			}
 
-		} catch (Exception e) {
-			throw new SimpleCommandExceptionType(new Message() {
+			for (IQRCommandAsyncListener l : listener) {
+				l.IQRCommandFinished(ctx);
+			}
+		};
 
-				@Override
-				public String getString() {
-					return e.getMessage();
-				}
-			}).create();
-		}
+		new Thread(task).start();
 
 		return Command.SINGLE_SUCCESS;
 	}

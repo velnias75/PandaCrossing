@@ -24,14 +24,24 @@ import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.DIS
 import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.literal;
 
-import net.fabricmc.api.ClientModInitializer;;
+import com.mojang.brigadier.context.CommandContext;
 
-public class PandaCrossingMod implements ClientModInitializer {
+import de.rangun.pandacrossing.QRCommand.IQRCommandAsyncListener;
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.minecraft.text.LiteralText;;
+
+public class PandaCrossingMod implements ClientModInitializer, IQRCommandAsyncListener {
 
 	@Override
 	public void onInitializeClient() {
 		DISPATCHER.register(literal("qr")
 				.requires(source -> (source.getPlayer().isCreative() || source.hasPermissionLevel(4)))
-				.then(argument("text", greedyString()).executes(new QRCommand())).executes(new QRCommandUsage()));
+				.then(argument("text", greedyString()).executes(new QRCommand(this))).executes(new QRCommandUsage()));
+	}
+
+	@Override
+	public void IQRCommandFinished(CommandContext<FabricClientCommandSource> ctx) {
+		ctx.getSource().sendFeedback(new LiteralText("QR-Code processing finished."));
 	}
 }
