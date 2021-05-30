@@ -19,19 +19,19 @@
 
 package de.rangun.pandacrossing;
 
-import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
-import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.argument;
-import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.literal;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.minecraft.text.LiteralText;
 
-public class PandaCrossingMod implements ClientModInitializer {
+final class QRCommandUsage implements Command<FabricClientCommandSource> {
 
 	@Override
-	public void onInitializeClient() {
-		ClientCommandManager.DISPATCHER.register(literal("qr")
-				.requires(source -> (source.getPlayer().isCreative() || source.hasPermissionLevel(4)))
-				.then(argument("text", greedyString()).executes(new QRCommand())).executes(new QRCommandUsage()));
+	public int run(CommandContext<FabricClientCommandSource> ctx) throws CommandSyntaxException {
+		ctx.getSource().sendFeedback(new LiteralText("Some usage"));
+		return Command.SINGLE_SUCCESS;
 	}
+
 }
