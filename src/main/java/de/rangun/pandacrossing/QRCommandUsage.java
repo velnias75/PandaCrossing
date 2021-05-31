@@ -29,7 +29,7 @@ import net.minecraft.text.LiteralText;
 final class QRCommandUsage implements Command<FabricClientCommandSource> {
 
 	@Override
-	public int run(CommandContext<FabricClientCommandSource> ctx) throws CommandSyntaxException {
+	public int run(final CommandContext<FabricClientCommandSource> ctx) throws CommandSyntaxException {
 		ctx.getSource().sendFeedback(new LiteralText("Some usage"));
 		return Command.SINGLE_SUCCESS;
 	}

@@ -31,17 +31,24 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.text.LiteralText;;
 
-public class PandaCrossingMod implements ClientModInitializer, IQRCommandAsyncListener {
+public final class PandaCrossingMod implements ClientModInitializer, IQRCommandAsyncListener {
 
 	@Override
 	public void onInitializeClient() {
+
+		final PCUndoCommand pcUndoCommand = new PCUndoCommand();
+
 		DISPATCHER.register(literal("qr")
-				.requires(source -> (source.getPlayer().isCreative() || source.hasPermissionLevel(4)))
+				.requires(source -> source.getPlayer().isCreative() || source.hasPermissionLevel(4))
 				.then(argument("text", greedyString()).executes(new QRCommand(this))).executes(new QRCommandUsage()));
+
+		DISPATCHER.register(
+				literal("pcundo").requires(source -> source.getPlayer().isCreative() || source.hasPermissionLevel(4))
+						.executes(pcUndoCommand));
 	}
 
 	@Override
-	public void IQRCommandFinished(CommandContext<FabricClientCommandSource> ctx) {
+	public void IQRCommandFinished(final CommandContext<FabricClientCommandSource> ctx) {
 		ctx.getSource().sendFeedback(new LiteralText("QR-Code processing finished."));
 	}
 }
