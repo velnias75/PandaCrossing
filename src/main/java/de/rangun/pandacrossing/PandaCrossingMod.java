@@ -26,29 +26,34 @@ import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.lit
 
 import com.mojang.brigadier.context.CommandContext;
 
-import de.rangun.pandacrossing.QRCommand.IQRCommandAsyncListener;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
-import net.minecraft.text.LiteralText;;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;;
 
-public final class PandaCrossingMod implements ClientModInitializer, IQRCommandAsyncListener {
+public final class PandaCrossingMod implements ClientModInitializer, ICommandAsyncListener {
+
+	private static boolean hasPermission(final FabricClientCommandSource src) {
+		return src.getPlayer().isCreative() || src.hasPermissionLevel(4);
+	}
 
 	@Override
 	public void onInitializeClient() {
 
-		final PCUndoCommand pcUndoCommand = new PCUndoCommand();
+//		final LiteralCommandNode<FabricClientCommandSource> undo = 
+		DISPATCHER.register(
+				literal("pcundo").requires(source -> hasPermission(source)).executes(new PCUndoCommand(this)));
 
-		DISPATCHER.register(literal("qr")
-				.requires(source -> source.getPlayer().isCreative() || source.hasPermissionLevel(4))
+		DISPATCHER.register(literal("qr").requires(source -> hasPermission(source))
 				.then(argument("text", greedyString()).executes(new QRCommand(this))).executes(new QRCommandUsage()));
 
-		DISPATCHER.register(
-				literal("pcundo").requires(source -> source.getPlayer().isCreative() || source.hasPermissionLevel(4))
-						.executes(pcUndoCommand));
+		// DISPATCHER.register(literal("qrundo").redirect(undo));
 	}
 
 	@Override
-	public void IQRCommandFinished(final CommandContext<FabricClientCommandSource> ctx) {
-		ctx.getSource().sendFeedback(new LiteralText("QR-Code processing finished."));
+	public void commandFinished(final ICommandAsyncNotifier src, final CommandContext<FabricClientCommandSource> ctx) {
+
+		if (ctx == null)
+			throw new IllegalStateException("CommandContext has not been set in " + src.getClass().getName());
+
+		ctx.getSource().sendFeedback(src.feedbackText(ctx));
 	}
 }

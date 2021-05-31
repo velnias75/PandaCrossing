@@ -19,8 +19,10 @@
 
 package de.rangun.pandacrossing;
 
-import java.util.Vector;
 import static net.minecraft.util.registry.Registry.BLOCK;
+
+import java.util.Vector;
+
 import com.google.zxing.common.BitMatrix;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
@@ -37,9 +39,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-final class PCUndoCommand implements Command<FabricClientCommandSource> {
+final class PCUndoCommand extends AbstractCommandAsyncNotifier implements Command<FabricClientCommandSource> {
 
 	private static Vector<Vector<UndoBlock>> undoMatrix = null;
+	private boolean undoSuccess = false;
 
 	private static class UndoBlock {
 
@@ -50,6 +53,10 @@ final class PCUndoCommand implements Command<FabricClientCommandSource> {
 			this.pos = pos;
 			this.state = state;
 		}
+	}
+
+	PCUndoCommand(ICommandAsyncListener l) {
+		super(l);
 	}
 
 	static BlockPos nextPos(final Direction facing, final BlockPos curPos, final int x, final int y) {
@@ -130,12 +137,18 @@ final class PCUndoCommand implements Command<FabricClientCommandSource> {
 	}
 
 	@Override
+	public LiteralText feedbackText(final CommandContext<FabricClientCommandSource> ctx) {
+		return undoSuccess ? new LiteralText("undo successful") : new LiteralText("nothing to undo");
+	}
+
+	@Override
 	public int run(final CommandContext<FabricClientCommandSource> ctx) throws CommandSyntaxException {
 
+		setCommandContext(ctx);
+		
 		final Runnable task = () -> {
-			ctx.getSource()
-					.sendFeedback(applyUndoMatrix(ctx.getSource().getPlayer()) ? new LiteralText("undo successful")
-							: new LiteralText("nothing to undo"));
+			undoSuccess = applyUndoMatrix(ctx.getSource().getPlayer());
+			notifyListeners();
 		};
 
 		new Thread(task).start();

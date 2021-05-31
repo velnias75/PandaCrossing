@@ -24,9 +24,6 @@ import static net.minecraft.block.Blocks.BLACK_CONCRETE;
 import static net.minecraft.block.Blocks.WHITE_CONCRETE;
 import static net.minecraft.util.registry.Registry.BLOCK;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.zxing.common.BitMatrix;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
@@ -41,19 +38,18 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
-final class QRCommand implements Command<FabricClientCommandSource> {
+final class QRCommand extends AbstractCommandAsyncNotifier implements Command<FabricClientCommandSource> {
 
 	private final static String BLACK_CONCRETE_ID = BLOCK.getId(BLACK_CONCRETE).toString();
 	private final static String WHITE_CONCRETE_ID = BLOCK.getId(WHITE_CONCRETE).toString();
 
-	public interface IQRCommandAsyncListener {
-		public void IQRCommandFinished(final CommandContext<FabricClientCommandSource> ctx);
+	QRCommand(final ICommandAsyncListener l) {
+		super(l);
 	}
-
-	private final List<IQRCommandAsyncListener> listener = new ArrayList<>();
 	
-	QRCommand(final IQRCommandAsyncListener l) {
-		listener.add(l);
+	@Override
+	public LiteralText feedbackText(final CommandContext<FabricClientCommandSource> ctx) {
+		return new LiteralText("QR-Code processing finished.");
 	}
 
 	@Override
@@ -65,13 +61,15 @@ final class QRCommand implements Command<FabricClientCommandSource> {
 		final Vec3d playerPos = player.getPos();
 		final BlockPos curPos = new BlockPos(playerPos.getX(), playerPos.getY() - 1.0d, playerPos.getZ());
 
+		setCommandContext(ctx);
+
 		final Runnable task = () -> {
 
 			try {
 
 				final BitMatrix matrix = QRGenerator.createQRCodeBitMatrix(txt);
 				final Direction facing = player.getHorizontalFacing();
-				
+
 				PCUndoCommand.generateUndoMatrix(player, facing, curPos, matrix);
 				QRGenerator.traverseQRCode(new IBlockTraverser() {
 
@@ -90,9 +88,7 @@ final class QRCommand implements Command<FabricClientCommandSource> {
 				ctx.getSource().sendFeedback(new LiteralText(e.getMessage()));
 			}
 
-			for (final IQRCommandAsyncListener l : listener) {
-				l.IQRCommandFinished(ctx);
-			}
+			notifyListeners();
 		};
 
 		new Thread(task).start();
