@@ -25,21 +25,34 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 public final class QRCommandUsage extends AbstractCommandBase implements Command<FabricClientCommandSource> {
 
 	public QRCommandUsage() {
-		super(null);
+		super();
 	}
 
 	@Override
 	public int run(final CommandContext<FabricClientCommandSource> ctx) throws CommandSyntaxException {
-		ctx.getSource().sendFeedback(new LiteralText("Some usage"));
+		ctx.getSource().sendFeedback(new LiteralText("Usage: ").formatted(Formatting.DARK_RED)
+				.append(new LiteralText("/qr [text]").formatted(Formatting.YELLOW).formatted(Formatting.ITALIC))
+				.append("\n")
+				.append(new LiteralText(
+						" creates a 23x23 block horizontal concrete QR code with the bottom left corner below the player\'s feet, representing ")
+								.formatted(Formatting.GRAY)
+								.append(new LiteralText("text").formatted(Formatting.ITALIC)
+										.append(new LiteralText(".").append("\n")
+												.append(new LiteralText(" /qrundo").formatted(Formatting.YELLOW)
+														.formatted(Formatting.ITALIC)
+														.append(new LiteralText(" will undo the last creation.")
+																.formatted(Formatting.GRAY)))))));
 		return Command.SINGLE_SUCCESS;
 	}
 
 	@Override
-	public LiteralText feedbackText(CommandContext<FabricClientCommandSource> ctx) {
+	public Text feedbackText(CommandContext<FabricClientCommandSource> ctx) {
 		return null;
 	}
 

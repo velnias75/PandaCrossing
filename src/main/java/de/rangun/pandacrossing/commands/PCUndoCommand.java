@@ -35,6 +35,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.state.property.Property;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -115,8 +117,9 @@ public final class PCUndoCommand extends AbstractCommandBase implements Command<
 	}
 
 	@Override
-	public LiteralText feedbackText(final CommandContext<FabricClientCommandSource> ctx) {
-		return undoSuccess ? new LiteralText("undo successful") : new LiteralText("nothing to undo");
+	public Text feedbackText(final CommandContext<FabricClientCommandSource> ctx) {
+		return undoSuccess ? new LiteralText("undo successful").formatted(Formatting.BOLD)
+				: new LiteralText("nothing to undo").formatted(Formatting.DARK_RED).formatted(Formatting.ITALIC);
 	}
 
 	@Override

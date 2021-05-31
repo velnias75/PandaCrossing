@@ -38,7 +38,7 @@ import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;;
 public final class PandaCrossingMod implements ClientModInitializer, ICommandAsyncListener {
 
 	private static boolean hasPermission(final FabricClientCommandSource src) {
-		return src.getPlayer().isCreative() || src.hasPermissionLevel(4);
+		return src.hasPermissionLevel(2) || src.getPlayer().isCreative();
 	}
 
 	@Override

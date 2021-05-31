@@ -34,6 +34,8 @@ import de.rangun.pandacrossing.qr.QRGenerator.IBlockTraverser;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
@@ -48,7 +50,7 @@ public final class QRCommand extends AbstractCommandBase implements Command<Fabr
 	}
 
 	@Override
-	public LiteralText feedbackText(final CommandContext<FabricClientCommandSource> ctx) {
+	public Text feedbackText(final CommandContext<FabricClientCommandSource> ctx) {
 		return new LiteralText("QR-Code processing finished.");
 	}
 
@@ -85,7 +87,8 @@ public final class QRCommand extends AbstractCommandBase implements Command<Fabr
 				}, matrix);
 
 			} catch (Exception e) {
-				ctx.getSource().sendFeedback(new LiteralText(e.getMessage()));
+				ctx.getSource().sendFeedback(new LiteralText(e.getMessage()).formatted(Formatting.DARK_RED)
+						.formatted(Formatting.BOLD).formatted(Formatting.ITALIC));
 			}
 
 			notifyListeners();
