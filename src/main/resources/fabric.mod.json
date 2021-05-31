@@ -14,7 +14,7 @@
   },
 
   "license": "GPL-3.0-or-later",
-  "icon": "assets/panda_crossing/icon.png",
+  "icon": "assets/panda_crossing/panda_crossing.png",
 
   "environment": "client",
   "entrypoints": {

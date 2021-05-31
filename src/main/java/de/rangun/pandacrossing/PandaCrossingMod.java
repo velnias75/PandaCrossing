@@ -25,6 +25,7 @@ import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.arg
 import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.literal;
 
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;;
@@ -38,14 +39,13 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 	@Override
 	public void onInitializeClient() {
 
-//		final LiteralCommandNode<FabricClientCommandSource> undo = 
-		DISPATCHER.register(
+		final LiteralCommandNode<FabricClientCommandSource> undo = DISPATCHER.register(
 				literal("pcundo").requires(source -> hasPermission(source)).executes(new PCUndoCommand(this)));
 
 		DISPATCHER.register(literal("qr").requires(source -> hasPermission(source))
 				.then(argument("text", greedyString()).executes(new QRCommand(this))).executes(new QRCommandUsage()));
 
-		// DISPATCHER.register(literal("qrundo").redirect(undo));
+		DISPATCHER.register(literal("qrundo").redirect(undo));
 	}
 
 	@Override
