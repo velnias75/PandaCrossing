@@ -17,7 +17,7 @@
  * along with PandaCrossing.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.rangun.pandacrossing;
+package de.rangun.pandacrossing.commands;
 
 import static net.minecraft.util.registry.Registry.BLOCK;
 
@@ -39,7 +39,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-final class PCUndoCommand extends AbstractCommandAsyncNotifier implements Command<FabricClientCommandSource> {
+public final class PCUndoCommand extends AbstractCommandBase implements Command<FabricClientCommandSource> {
 
 	private static Vector<Vector<UndoBlock>> undoMatrix = null;
 	private boolean undoSuccess = false;
@@ -55,30 +55,8 @@ final class PCUndoCommand extends AbstractCommandAsyncNotifier implements Comman
 		}
 	}
 
-	PCUndoCommand(ICommandAsyncListener l) {
+	public PCUndoCommand(ICommandAsyncListener l) {
 		super(l);
-	}
-
-	static BlockPos nextPos(final Direction facing, final BlockPos curPos, final int x, final int y) {
-
-		final BlockPos nextPos;
-
-		switch (facing) {
-		case WEST:
-			nextPos = curPos.add(y * -1, 0, x * -1);
-			break;
-		case EAST:
-			nextPos = curPos.add(y, 0, x);
-			break;
-		case NORTH:
-			nextPos = curPos.add(x, 0, y * -1);
-			break;
-		default:
-			nextPos = curPos.add(x * -1, 0, y);
-			break;
-		}
-
-		return nextPos;
 	}
 
 	public static void generateUndoMatrix(final ClientPlayerEntity player, final Direction facing,
@@ -145,7 +123,7 @@ final class PCUndoCommand extends AbstractCommandAsyncNotifier implements Comman
 	public int run(final CommandContext<FabricClientCommandSource> ctx) throws CommandSyntaxException {
 
 		setCommandContext(ctx);
-		
+
 		final Runnable task = () -> {
 			undoSuccess = applyUndoMatrix(ctx.getSource().getPlayer());
 			notifyListeners();

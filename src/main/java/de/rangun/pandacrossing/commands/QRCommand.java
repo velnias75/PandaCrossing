@@ -17,7 +17,7 @@
  * along with PandaCrossing.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.rangun.pandacrossing;
+package de.rangun.pandacrossing.commands;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static net.minecraft.block.Blocks.BLACK_CONCRETE;
@@ -38,15 +38,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
-final class QRCommand extends AbstractCommandAsyncNotifier implements Command<FabricClientCommandSource> {
+public final class QRCommand extends AbstractCommandBase implements Command<FabricClientCommandSource> {
 
 	private final static String BLACK_CONCRETE_ID = BLOCK.getId(BLACK_CONCRETE).toString();
 	private final static String WHITE_CONCRETE_ID = BLOCK.getId(WHITE_CONCRETE).toString();
 
-	QRCommand(final ICommandAsyncListener l) {
+	public QRCommand(final ICommandAsyncListener l) {
 		super(l);
 	}
-	
+
 	@Override
 	public LiteralText feedbackText(final CommandContext<FabricClientCommandSource> ctx) {
 		return new LiteralText("QR-Code processing finished.");
@@ -76,7 +76,7 @@ final class QRCommand extends AbstractCommandAsyncNotifier implements Command<Fa
 					@Override
 					public void traverse(int x, int y, boolean b) {
 
-						final BlockPos nextPos = PCUndoCommand.nextPos(facing, curPos, x, y);
+						final BlockPos nextPos = nextPos(facing, curPos, x, y);
 
 						player.sendChatMessage("/setblock " + nextPos.getX() + " " + nextPos.getY() + " "
 								+ nextPos.getZ() + " " + (b ? BLACK_CONCRETE_ID : WHITE_CONCRETE_ID) + " replace");

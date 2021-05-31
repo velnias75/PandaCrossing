@@ -27,6 +27,11 @@ import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.lit
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 
+import de.rangun.pandacrossing.commands.ICommandAsyncListener;
+import de.rangun.pandacrossing.commands.ICommandAsyncNotifier;
+import de.rangun.pandacrossing.commands.PCUndoCommand;
+import de.rangun.pandacrossing.commands.QRCommand;
+import de.rangun.pandacrossing.commands.QRCommandUsage;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;;
 

@@ -17,12 +17,34 @@
  * along with PandaCrossing.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.rangun.pandacrossing;
+package de.rangun.pandacrossing.commands;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import com.mojang.brigadier.context.CommandContext;
 
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 
-interface ICommandAsyncListener {
-	public void commandFinished(final ICommandAsyncNotifier src, final CommandContext<FabricClientCommandSource> ctx);
+abstract class AbstractCommandAsyncNotifier implements ICommandAsyncNotifier {
+
+	private final List<ICommandAsyncListener> listener = new ArrayList<>();
+	private CommandContext<FabricClientCommandSource> ctx = null;
+
+	protected AbstractCommandAsyncNotifier() {
+	}
+
+	AbstractCommandAsyncNotifier(final ICommandAsyncListener l) {
+		listener.add(l);
+	}
+
+	void setCommandContext(final CommandContext<FabricClientCommandSource> ctx) {
+		this.ctx = ctx;
+	}
+
+	void notifyListeners() {
+		for (final ICommandAsyncListener l : listener) {
+			l.commandFinished(this, ctx);
+		}
+	}
 }

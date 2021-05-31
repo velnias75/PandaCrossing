@@ -17,13 +17,13 @@
  * along with PandaCrossing.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.rangun.pandacrossing;
+package de.rangun.pandacrossing.commands;
 
 import com.mojang.brigadier.context.CommandContext;
 
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.text.LiteralText;
 
-interface ICommandAsyncNotifier {
-	abstract LiteralText feedbackText(final CommandContext<FabricClientCommandSource> ctx);
+public interface ICommandAsyncNotifier {
+	LiteralText feedbackText(final CommandContext<FabricClientCommandSource> ctx);
 }

@@ -17,21 +17,12 @@
  * along with PandaCrossing.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.rangun.pandacrossing;
+package de.rangun.pandacrossing.commands;
 
-import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
-import net.minecraft.text.LiteralText;
 
-final class QRCommandUsage implements Command<FabricClientCommandSource> {
-
-	@Override
-	public int run(final CommandContext<FabricClientCommandSource> ctx) throws CommandSyntaxException {
-		ctx.getSource().sendFeedback(new LiteralText("Some usage"));
-		return Command.SINGLE_SUCCESS;
-	}
-
+public interface ICommandAsyncListener {
+	void commandFinished(final ICommandAsyncNotifier src, final CommandContext<FabricClientCommandSource> ctx);
 }

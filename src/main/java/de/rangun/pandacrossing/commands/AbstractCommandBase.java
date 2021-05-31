@@ -17,31 +17,40 @@
  * along with PandaCrossing.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.rangun.pandacrossing;
+package de.rangun.pandacrossing.commands;
 
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 
-import com.mojang.brigadier.context.CommandContext;
+abstract class AbstractCommandBase extends AbstractCommandAsyncNotifier {
 
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
-
-abstract class AbstractCommandAsyncNotifier implements ICommandAsyncNotifier {
-
-	private final List<ICommandAsyncListener> listener = new ArrayList<>();
-	private CommandContext<FabricClientCommandSource> ctx = null;
-
-	AbstractCommandAsyncNotifier(final ICommandAsyncListener l) {
-		listener.add(l);
+	AbstractCommandBase() {
 	}
 
-	void setCommandContext(final CommandContext<FabricClientCommandSource> ctx) {
-		this.ctx = ctx;
+	AbstractCommandBase(ICommandAsyncListener l) {
+		super(l);
 	}
 
-	void notifyListeners() {
-		for (final ICommandAsyncListener l : listener) {
-			l.commandFinished(this, ctx);
+	protected static BlockPos nextPos(final Direction facing, final BlockPos curPos, final int x, final int y) {
+
+		final BlockPos nextPos;
+
+		switch (facing) {
+		case WEST:
+			nextPos = curPos.add(y * -1, 0, x * -1);
+			break;
+		case EAST:
+			nextPos = curPos.add(y, 0, x);
+			break;
+		case NORTH:
+			nextPos = curPos.add(x, 0, y * -1);
+			break;
+		default:
+			nextPos = curPos.add(x * -1, 0, y);
+			break;
 		}
+
+		return nextPos;
 	}
+
 }
