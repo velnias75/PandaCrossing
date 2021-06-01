@@ -3,7 +3,6 @@ install: skip
 
 os: linux
 dist: focal
-jdk: oraclejdk8
 
 script:
   - ./gradlew build --scan -s
