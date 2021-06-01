@@ -18,7 +18,7 @@ cache:
 
 deploy:
   provider: releases
-  file: build/libs/pandacrossing-*.jar
+  file: build/libs/pandacrossing-[0-9].[0-9].jar
   edge: true # opt in to dpl v2
   on:
     tags: true
