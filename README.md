@@ -1,3 +1,5 @@
+![Screenshot of PandaCrossing](https://media.forgecdn.net/attachments/368/395/2021-06-01_11.png)
+
 # PandaCrossing [![Build Status](https://travis-ci.com/velnias75/PandaCrossing.svg?branch=main)](https://travis-ci.com/velnias75/PandaCrossing)
 A *Fabric Mod* to create QR codes
 
