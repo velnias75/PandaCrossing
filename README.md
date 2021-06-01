@@ -1,5 +1,3 @@
-![Screenshot of PandaCrossing](https://media.forgecdn.net/attachments/368/395/2021-06-01_11.png)
-
 # PandaCrossing [![Build Status](https://travis-ci.com/velnias75/PandaCrossing.svg?branch=main)](https://travis-ci.com/velnias75/PandaCrossing)
 A *Fabric Mod* to create QR codes
 
@@ -23,3 +21,5 @@ Caveat
 
 *undo* works with the data received by the client. I.e. if another player modifies the same area in the meantime, *undo* will restore to the state at the invokation of `/qr`.
 Further *entities* and *block entities* are currently **NOT** restored.
+
+![Screenshot of PandaCrossing](https://user-images.githubusercontent.com/4481414/120403323-42bff180-c344-11eb-8baa-7c0fa88aeea9.png)
