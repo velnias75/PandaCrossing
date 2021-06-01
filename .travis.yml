@@ -15,3 +15,11 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+
+deploy:
+  provider: releases
+  file: build/libs/pandacrossing-*.jar
+  edge: true # opt in to dpl v2
+  on:
+    tags: true
+  draft: true
