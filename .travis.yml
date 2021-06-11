@@ -25,4 +25,4 @@ deploy:
   draft: true
   
 jdk:
-  - openjdk11
+  - openjdk16
