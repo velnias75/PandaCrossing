@@ -20,6 +20,12 @@ repositories {
 		name = 'velocity'
 		url = 'https://nexus.velocitypowered.com/repository/maven-public/'
 	}
+	maven {
+		name = 'modmenu'
+		url = 'https://maven.terraformersmc.com/releases/'
+	}
+	maven { url "https://aperlambda.github.io/maven" }
+	maven { url "https://jitpack.io" }
 }
 
 dependencies {
@@ -35,8 +41,13 @@ dependencies {
 	include "com.google.zxing:javase:${project.zxing_version}"
 	include "com.google.zxing:core:${project.zxing_version}"
 	
-	modImplementation "com.velocitypowered:velocity-brigadier:${project.velocity_version}"
-	include "com.velocitypowered:velocity-brigadier:${project.velocity_version}"
+	modImplementation include("com.velocitypowered:velocity-brigadier:${project.velocity_version}")
+	
+	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}") {
+		transitive = false
+	}
+	
+	modImplementation include("com.github.LambdAurora:SpruceUI:${project.spruceui_version}")
 }
 
 processResources {

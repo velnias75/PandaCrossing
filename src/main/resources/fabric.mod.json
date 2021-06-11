@@ -20,6 +20,9 @@
   "entrypoints": {
     "client": [
       "de.rangun.pandacrossing.PandaCrossingMod"
+    ],
+    "modmenu": [
+      "de.rangun.pandacrossing.modmenu.ModMenu"
     ]
   },
   "mixins": [
