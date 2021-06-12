@@ -32,6 +32,9 @@ import de.rangun.pandacrossing.commands.ICommandAsyncNotifier;
 import de.rangun.pandacrossing.commands.PCUndoCommand;
 import de.rangun.pandacrossing.commands.QRCommand;
 import de.rangun.pandacrossing.commands.QRCommandUsage;
+import de.rangun.pandacrossing.config.Config;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 
@@ -44,6 +47,8 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 	@Override
 	public void onInitializeClient() {
 
+		AutoConfig.register(Config.class, GsonConfigSerializer::new);
+
 		final LiteralCommandNode<FabricClientCommandSource> undo = DISPATCHER.register(
 				literal("pcundo").requires(source -> hasPermission(source)).executes(new PCUndoCommand(this)));
 
@@ -51,6 +56,7 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 				.then(argument("text", greedyString()).executes(new QRCommand(this))).executes(new QRCommandUsage()));
 
 		DISPATCHER.register(literal("qrundo").redirect(undo));
+
 	}
 
 	@Override

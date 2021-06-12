@@ -17,15 +17,11 @@
  * along with PandaCrossing.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.rangun.pandacrossing.modmenu;
+package de.rangun.pandacrossing.config;
 
-import com.terraformersmc.modmenu.api.ConfigScreenFactory;
-import com.terraformersmc.modmenu.api.ModMenuApi;
+import me.shedaniel.autoconfig.ConfigData;
 
-public class ModMenu implements ModMenuApi {
-
-	@Override
-	public ConfigScreenFactory<?> getModConfigScreenFactory() {
-		return ConfigScreen::new;
-	}
+@me.shedaniel.autoconfig.annotation.Config(name = "panda_crossing")
+public class Config implements ConfigData {
+	public int command_delay = 0;
 }

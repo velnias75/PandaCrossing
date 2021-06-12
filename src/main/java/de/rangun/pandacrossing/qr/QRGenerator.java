@@ -33,7 +33,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 public final class QRGenerator {
 
 	public interface IBlockTraverser {
-		void traverse(final int x, final int y, final boolean b);
+		void traverse(final int x, final int y, final boolean b) throws InterruptedException;
 	};
 
 	public static BitMatrix createQRCodeBitMatrix(final String qrCodeData) throws WriterException {
@@ -49,7 +49,8 @@ public final class QRGenerator {
 				1, 1, hintMap);
 	}
 
-	public static void traverseQRCode(final IBlockTraverser traverser, final BitMatrix matrix) {
+	public static void traverseQRCode(final IBlockTraverser traverser, final BitMatrix matrix)
+			throws InterruptedException {
 
 		for (int y = 0; y < matrix.getHeight(); ++y) {
 			for (int x = 0; x < matrix.getWidth(); ++x) {
