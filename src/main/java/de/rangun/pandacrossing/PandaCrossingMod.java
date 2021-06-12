@@ -67,11 +67,11 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 				.then(argument("text", greedyString()).executes(new QRCommand(this))).executes(new QRCommandUsage()));
 
 		DISPATCHER.register(literal("qrundo").redirect(undo));
-		
+
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-		    while (keyBinding.wasPressed()) {
-			   client.openScreen(AutoConfig.getConfigScreen(Config.class, null).get());
-		    }
+			while (keyBinding.wasPressed()) {
+				client.openScreen(AutoConfig.getConfigScreen(Config.class, null).get());
+			}
 		});
 
 	}
