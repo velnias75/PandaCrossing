@@ -22,14 +22,17 @@ package de.rangun.pandacrossing.commands;
 import static net.minecraft.util.registry.Registry.BLOCK;
 
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
 import com.google.zxing.common.BitMatrix;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import de.rangun.pandacrossing.config.Config;
 import de.rangun.pandacrossing.qr.QRGenerator;
 import de.rangun.pandacrossing.qr.QRGenerator.IBlockTraverser;
+import me.shedaniel.autoconfig.AutoConfig;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -62,7 +65,7 @@ public final class PCUndoCommand extends AbstractCommandBase implements Command<
 	}
 
 	public static void generateUndoMatrix(final ClientPlayerEntity player, final Direction facing,
-			final BlockPos curPos, final BitMatrix matrix) {
+			final BlockPos curPos, final BitMatrix matrix) throws InterruptedException {
 
 		undoMatrix = new Vector<Vector<UndoBlock>>(matrix.getHeight());
 
@@ -84,14 +87,22 @@ public final class PCUndoCommand extends AbstractCommandBase implements Command<
 		}, matrix);
 	}
 
-	private boolean applyUndoMatrix(final ClientPlayerEntity player) {
+	private boolean applyUndoMatrix(final ClientPlayerEntity player) throws InterruptedException {
 
 		if (undoMatrix != null) {
 
+			final int delay = AutoConfig.getConfigHolder(Config.class).getConfig().command_delay;
+
 			for (final Vector<UndoBlock> v1 : undoMatrix) {
+
 				for (final UndoBlock v2 : v1) {
+
 					player.sendChatMessage("/setblock " + v2.pos.getX() + " " + v2.pos.getY() + " " + v2.pos.getZ()
 							+ " " + BLOCK.getId(v2.state.getBlock()) + deserializeBlockState(v2.state) + " replace");
+
+					if (delay > 0) {
+						TimeUnit.MILLISECONDS.sleep(delay);
+					}
 				}
 			}
 
@@ -128,7 +139,14 @@ public final class PCUndoCommand extends AbstractCommandBase implements Command<
 		setCommandContext(ctx);
 
 		final Runnable task = () -> {
-			undoSuccess = applyUndoMatrix(ctx.getSource().getPlayer());
+
+			try {
+				undoSuccess = applyUndoMatrix(ctx.getSource().getPlayer());
+			} catch (Exception e) {
+				ctx.getSource().sendFeedback(new LiteralText(e.getMessage()).formatted(Formatting.DARK_RED)
+						.formatted(Formatting.BOLD).formatted(Formatting.ITALIC));
+			}
+
 			notifyListeners();
 		};
 

@@ -24,6 +24,8 @@ import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.DIS
 import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.literal;
 
+import org.lwjgl.glfw.GLFW;
+
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 
@@ -32,10 +34,19 @@ import de.rangun.pandacrossing.commands.ICommandAsyncNotifier;
 import de.rangun.pandacrossing.commands.PCUndoCommand;
 import de.rangun.pandacrossing.commands.QRCommand;
 import de.rangun.pandacrossing.commands.QRCommandUsage;
+import de.rangun.pandacrossing.config.Config;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 
 public final class PandaCrossingMod implements ClientModInitializer, ICommandAsyncListener {
+
+	private static KeyBinding keyBinding;
 
 	private static boolean hasPermission(final FabricClientCommandSource src) {
 		return src.hasPermissionLevel(2) || src.getPlayer().isCreative();
@@ -44,6 +55,11 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 	@Override
 	public void onInitializeClient() {
 
+		AutoConfig.register(Config.class, GsonConfigSerializer::new);
+
+		keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.examplemod.spook", InputUtil.Type.KEYSYM,
+				GLFW.GLFW_KEY_U, "category.examplemod.test"));
+
 		final LiteralCommandNode<FabricClientCommandSource> undo = DISPATCHER.register(
 				literal("pcundo").requires(source -> hasPermission(source)).executes(new PCUndoCommand(this)));
 
@@ -51,6 +67,13 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 				.then(argument("text", greedyString()).executes(new QRCommand(this))).executes(new QRCommandUsage()));
 
 		DISPATCHER.register(literal("qrundo").redirect(undo));
+
+		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+			while (keyBinding.wasPressed()) {
+				client.openScreen(AutoConfig.getConfigScreen(Config.class, null).get());
+			}
+		});
+
 	}
 
 	@Override

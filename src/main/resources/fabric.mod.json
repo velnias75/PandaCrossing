@@ -22,7 +22,7 @@
       "de.rangun.pandacrossing.PandaCrossingMod"
     ],
     "modmenu": [
-      "de.rangun.pandacrossing.modmenu.ModMenu"
+      "de.rangun.pandacrossing.config.ModMenu"
     ]
   },
   "mixins": [

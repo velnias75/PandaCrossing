@@ -24,13 +24,17 @@ import static net.minecraft.block.Blocks.BLACK_CONCRETE;
 import static net.minecraft.block.Blocks.WHITE_CONCRETE;
 import static net.minecraft.util.registry.Registry.BLOCK;
 
+import java.util.concurrent.TimeUnit;
+
 import com.google.zxing.common.BitMatrix;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import de.rangun.pandacrossing.config.Config;
 import de.rangun.pandacrossing.qr.QRGenerator;
 import de.rangun.pandacrossing.qr.QRGenerator.IBlockTraverser;
+import me.shedaniel.autoconfig.AutoConfig;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.text.LiteralText;
@@ -59,6 +63,8 @@ public final class QRCommand extends AbstractCommandBase implements Command<Fabr
 
 		final String txt = getString(ctx, "text");
 
+		final int delay = AutoConfig.getConfigHolder(Config.class).getConfig().command_delay;
+
 		final ClientPlayerEntity player = ctx.getSource().getPlayer();
 		final Vec3d playerPos = player.getPos();
 		final BlockPos curPos = new BlockPos(playerPos.getX(), playerPos.getY() - 1.0d, playerPos.getZ());
@@ -76,12 +82,16 @@ public final class QRCommand extends AbstractCommandBase implements Command<Fabr
 				QRGenerator.traverseQRCode(new IBlockTraverser() {
 
 					@Override
-					public void traverse(int x, int y, boolean b) {
+					public void traverse(int x, int y, boolean b) throws InterruptedException {
 
 						final BlockPos nextPos = nextPos(facing, curPos, x, y);
 
 						player.sendChatMessage("/setblock " + nextPos.getX() + " " + nextPos.getY() + " "
 								+ nextPos.getZ() + " " + (b ? BLACK_CONCRETE_ID : WHITE_CONCRETE_ID) + " replace");
+
+						if (delay > 0) {
+							TimeUnit.MILLISECONDS.sleep(delay);
+						}
 					}
 
 				}, matrix);
@@ -91,7 +101,9 @@ public final class QRCommand extends AbstractCommandBase implements Command<Fabr
 						.formatted(Formatting.BOLD).formatted(Formatting.ITALIC));
 			}
 
-			notifyListeners();
+			if (delay > 0) {
+				notifyListeners();
+			}
 		};
 
 		new Thread(task).start();
