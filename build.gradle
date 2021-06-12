@@ -42,7 +42,7 @@ dependencies {
 	
 	modImplementation include("com.velocitypowered:velocity-brigadier:${project.velocity_version}")
 	
-	modApi include("me.shedaniel.cloth:cloth-config-fabric:${project.clothconfig_version}") {
+	modImplementation include("me.shedaniel.cloth:cloth-config-fabric:${project.clothconfig_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
     
