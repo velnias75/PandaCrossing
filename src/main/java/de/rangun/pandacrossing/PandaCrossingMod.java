@@ -33,7 +33,7 @@ import de.rangun.pandacrossing.commands.PCUndoCommand;
 import de.rangun.pandacrossing.commands.QRCommand;
 import de.rangun.pandacrossing.commands.QRCommandUsage;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 
 public final class PandaCrossingMod implements ClientModInitializer, ICommandAsyncListener {
 
