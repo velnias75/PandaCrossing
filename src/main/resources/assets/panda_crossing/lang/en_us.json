@@ -1,5 +1,5 @@
 {
-	"text.autoconfig.panda_crossing.title": "PandaCrossing Menu",
+	"text.autoconfig.panda_crossing.title": "PandaCrossing Settings",
 	"text.autoconfig.panda_crossing.option.command_delay": "Command delay (in milliseconds)",
 	"text.panda_crossing.undo.success": "undo successful",
 	"text.panda_crossing.undo.nothing": "nothing to undo",

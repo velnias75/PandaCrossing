@@ -34,7 +34,7 @@ import de.rangun.pandacrossing.commands.ICommandAsyncNotifier;
 import de.rangun.pandacrossing.commands.PCUndoCommand;
 import de.rangun.pandacrossing.commands.QRCommand;
 import de.rangun.pandacrossing.commands.QRCommandUsage;
-import de.rangun.pandacrossing.config.Config;
+import de.rangun.pandacrossing.config.PandaCrossingConfig;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
@@ -55,7 +55,7 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 	@Override
 	public void onInitializeClient() {
 
-		AutoConfig.register(Config.class, GsonConfigSerializer::new);
+		AutoConfig.register(PandaCrossingConfig.class, GsonConfigSerializer::new);
 
 		keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.examplemod.spook", InputUtil.Type.KEYSYM,
 				GLFW.GLFW_KEY_U, "category.examplemod.test"));
@@ -70,7 +70,7 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			while (keyBinding.wasPressed()) {
-				client.openScreen(AutoConfig.getConfigScreen(Config.class, null).get());
+				client.openScreen(AutoConfig.getConfigScreen(PandaCrossingConfig.class, null).get());
 			}
 		});
 

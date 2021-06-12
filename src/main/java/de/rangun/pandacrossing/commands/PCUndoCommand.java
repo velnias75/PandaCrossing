@@ -29,7 +29,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import de.rangun.pandacrossing.config.Config;
+import de.rangun.pandacrossing.config.PandaCrossingConfig;
 import de.rangun.pandacrossing.qr.QRGenerator;
 import de.rangun.pandacrossing.qr.QRGenerator.IBlockTraverser;
 import me.shedaniel.autoconfig.AutoConfig;
@@ -92,7 +92,7 @@ public final class PCUndoCommand extends AbstractCommandBase implements Command<
 
 		if (undoMatrix != null) {
 
-			final int delay = AutoConfig.getConfigHolder(Config.class).getConfig().command_delay;
+			final int delay = AutoConfig.getConfigHolder(PandaCrossingConfig.class).getConfig().command_delay;
 
 			for (final Vector<UndoBlock> v1 : undoMatrix) {
 

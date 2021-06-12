@@ -31,6 +31,6 @@ public class ModMenu implements ModMenuApi {
 
 	@Override
 	public ConfigScreenFactory<?> getModConfigScreenFactory() {
-		return parent -> AutoConfig.getConfigScreen(Config.class, parent).get();
+		return parent -> AutoConfig.getConfigScreen(PandaCrossingConfig.class, parent).get();
 	}
 }

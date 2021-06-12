@@ -31,7 +31,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import de.rangun.pandacrossing.config.Config;
+import de.rangun.pandacrossing.config.PandaCrossingConfig;
 import de.rangun.pandacrossing.qr.QRGenerator;
 import de.rangun.pandacrossing.qr.QRGenerator.IBlockTraverser;
 import me.shedaniel.autoconfig.AutoConfig;
@@ -64,7 +64,7 @@ public final class QRCommand extends AbstractCommandBase implements Command<Fabr
 
 		final String txt = getString(ctx, "text");
 
-		final int delay = AutoConfig.getConfigHolder(Config.class).getConfig().command_delay;
+		final int delay = AutoConfig.getConfigHolder(PandaCrossingConfig.class).getConfig().command_delay;
 
 		final ClientPlayerEntity player = ctx.getSource().getPlayer();
 		final Vec3d playerPos = player.getPos();
