@@ -39,6 +39,7 @@ import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -55,7 +56,7 @@ public final class QRCommand extends AbstractCommandBase implements Command<Fabr
 
 	@Override
 	public Text feedbackText(final CommandContext<FabricClientCommandSource> ctx) {
-		return new LiteralText("QR-Code processing finished.");
+		return new TranslatableText("text.panda_crossing.qrcommand.finished");
 	}
 
 	@Override
