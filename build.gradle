@@ -46,9 +46,7 @@ dependencies {
         exclude(group: "net.fabricmc.fabric-api")
     }
     
-	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}") {
-		transitive = false
-	}
+	modApi("com.terraformersmc:modmenu:${project.modmenu_version}")
 }
 
 processResources {
