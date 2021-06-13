@@ -19,22 +19,21 @@
 
 package de.rangun.pandacrossing.config;
 
-import com.terraformersmc.modmenu.api.ConfigScreenFactory;
-import com.terraformersmc.modmenu.api.ModMenuApi;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
+import net.minecraft.client.gui.screen.Screen;
 
-import de.rangun.pandacrossing.PandaCrossingMod;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+public final class ClothConfig2Utils {
 
-@Environment(EnvType.CLIENT)
-public class ModMenu implements ModMenuApi {
+	public void register() {
+		AutoConfig.register(PandaCrossingConfig.class, GsonConfigSerializer::new);
+	}
 
-	@Override
-	public ConfigScreenFactory<?> getModConfigScreenFactory() {
-		if (PandaCrossingMod.hasClothConfig2()) {
-			return parent -> (new ClothConfig2Utils()).getConfigScreen(parent);
-		}
+	public Screen getConfigScreen(final Screen parent) {
+		return AutoConfig.getConfigScreen(PandaCrossingConfig.class, parent).get();
+	}
 
-		return parent -> null;
+	public PandaCrossingConfig getConfig() {
+		return AutoConfig.getConfigHolder(PandaCrossingConfig.class).getConfig();
 	}
 }

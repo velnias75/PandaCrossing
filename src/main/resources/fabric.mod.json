@@ -33,8 +33,11 @@
     "fabric": "*",
     "minecraft": "1.16.x"
   },
+  "recommends": {
+    "cloth-config2": ">=4.11.26"
+  },
   "suggests": {
-    "another-mod": "*"
+    "modmenu": ">=2.0.0"
   },
   "custom": {
     "modmenu": {

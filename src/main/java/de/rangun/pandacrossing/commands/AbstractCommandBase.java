@@ -19,6 +19,8 @@
 
 package de.rangun.pandacrossing.commands;
 
+import de.rangun.pandacrossing.PandaCrossingMod;
+import de.rangun.pandacrossing.config.ClothConfig2Utils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
@@ -29,6 +31,15 @@ abstract class AbstractCommandBase extends AbstractCommandAsyncNotifier {
 
 	AbstractCommandBase(ICommandAsyncListener l) {
 		super(l);
+	}
+
+	protected int getDelay() {
+
+		if (PandaCrossingMod.hasClothConfig2()) {
+			return (new ClothConfig2Utils().getConfig()).command_delay;
+		}
+
+		return 0;
 	}
 
 	protected static BlockPos nextPos(final Direction facing, final BlockPos curPos, final int x, final int y) {
