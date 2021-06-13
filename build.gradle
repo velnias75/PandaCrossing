@@ -114,11 +114,11 @@ String getReleaseType() {
 def curseReleaseType = getReleaseType()
 def ENV = System.getenv()
 
-tasks.curseforge.enabled = !projectBaseVersion.contains('SNAPSHOT') && curse_api_key && project.hasProperty('curseProjectId') && project.hasProperty('curseGameVersion')
+tasks.curseforge.enabled = !projectBaseVersion.contains('SNAPSHOT') && project.hasProperty('curse_api_key') && project.hasProperty('curseProjectId') && project.hasProperty('curseGameVersion')
 
 curseforge {
 	
-  	apiKey = curse_api_key
+  	if(project.hasProperty('curse_api_key')) apiKey = curse_api_key
 
   	project {
   		id = curseProjectId
