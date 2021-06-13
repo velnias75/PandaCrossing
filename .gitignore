@@ -12,3 +12,5 @@
 build
 bin
 run
+
+private.gradle
