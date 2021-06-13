@@ -57,8 +57,8 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 
 		AutoConfig.register(PandaCrossingConfig.class, GsonConfigSerializer::new);
 
-		keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.examplemod.spook", InputUtil.Type.KEYSYM,
-				GLFW.GLFW_KEY_U, "category.examplemod.test"));
+		keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.panda_crossing.settings",
+				InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_U, "category.panda_crossing.keys"));
 
 		final LiteralCommandNode<FabricClientCommandSource> undo = DISPATCHER.register(
 				literal("pcundo").requires(source -> hasPermission(source)).executes(new PCUndoCommand(this)));
