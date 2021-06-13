@@ -34,13 +34,16 @@ import de.rangun.pandacrossing.commands.ICommandAsyncNotifier;
 import de.rangun.pandacrossing.commands.PCUndoCommand;
 import de.rangun.pandacrossing.commands.QRCommand;
 import de.rangun.pandacrossing.commands.QRCommandUsage;
-import de.rangun.pandacrossing.config.PandaCrossingConfig;
-import me.shedaniel.autoconfig.AutoConfig;
-import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
+import de.rangun.pandacrossing.config.ClothConfig2Utils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.Version;
+import net.fabricmc.loader.api.VersionParsingException;
+import net.fabricmc.loader.util.version.SemanticVersionImpl;
+import net.fabricmc.loader.util.version.SemanticVersionPredicateParser;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 
@@ -48,17 +51,37 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 
 	private static KeyBinding keyBinding;
 
-	private static boolean hasPermission(final FabricClientCommandSource src) {
-		return src.hasPermissionLevel(2) || src.getPlayer().isCreative();
+	public static boolean hasClothConfig2() {
+
+		if (FabricLoader.getInstance().isModLoaded("cloth-config2")) {
+
+			final Version v = FabricLoader.getInstance().getModContainer("cloth-config2").get().getMetadata()
+					.getVersion();
+
+			try {
+				return SemanticVersionPredicateParser.create(">=4.9.0")
+						.test(new SemanticVersionImpl(v.getFriendlyString(), false));
+			} catch (VersionParsingException e) {
+				return false;
+			}
+		}
+
+		return false;
 	}
 
 	@Override
 	public void onInitializeClient() {
 
-		AutoConfig.register(PandaCrossingConfig.class, GsonConfigSerializer::new);
+		ClothConfig2Utils ccu = null;
 
-		keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.panda_crossing.settings",
-				InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_U, "category.panda_crossing.keys"));
+		if (hasClothConfig2()) {
+
+			ccu = new ClothConfig2Utils();
+			ccu.register();
+
+			keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.panda_crossing.settings",
+					InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_U, "category.panda_crossing.keys"));
+		}
 
 		final LiteralCommandNode<FabricClientCommandSource> undo = DISPATCHER.register(
 				literal("pcundo").requires(source -> hasPermission(source)).executes(new PCUndoCommand(this)));
@@ -68,12 +91,20 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 
 		DISPATCHER.register(literal("qrundo").redirect(undo));
 
-		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			while (keyBinding.wasPressed()) {
-				client.openScreen(AutoConfig.getConfigScreen(PandaCrossingConfig.class, null).get());
-			}
-		});
+		if (ccu != null) {
 
+			final ClothConfig2Utils ccu2 = ccu;
+
+			ClientTickEvents.END_CLIENT_TICK.register(client -> {
+				while (keyBinding.wasPressed()) {
+					client.openScreen(ccu2.getConfigScreen(null));
+				}
+			});
+		}
+	}
+
+	private static boolean hasPermission(final FabricClientCommandSource src) {
+		return src.hasPermissionLevel(2) || src.getPlayer().isCreative();
 	}
 
 	@Override
