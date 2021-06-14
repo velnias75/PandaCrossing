@@ -19,17 +19,20 @@
 
 package de.rangun.pandacrossing.commands;
 
+import com.google.zxing.WriterException;
+
 import de.rangun.pandacrossing.PandaCrossingMod;
 import de.rangun.pandacrossing.config.ClothConfig2Utils;
+import de.rangun.pandacrossing.qr.QRGenerator;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
 abstract class AbstractCommandBase extends AbstractCommandAsyncNotifier {
 
-	AbstractCommandBase() {
+	protected AbstractCommandBase() {
 	}
 
-	AbstractCommandBase(ICommandAsyncListener l) {
+	protected AbstractCommandBase(ICommandAsyncListener l) {
 		super(l);
 	}
 
@@ -42,10 +45,37 @@ abstract class AbstractCommandBase extends AbstractCommandAsyncNotifier {
 		return 0;
 	}
 
-	protected long estimatedMilliseconds() {
+	protected int getDimension() {
 
 		if (PandaCrossingMod.hasClothConfig2()) {
-			return (new ClothConfig2Utils().getConfig()).command_delay * (23l * 23l);
+			return (new ClothConfig2Utils().getConfig()).dimension;
+		}
+
+		return 1;
+	}
+
+	protected String getPreset() {
+
+		if (PandaCrossingMod.hasClothConfig2()) {
+			return (new ClothConfig2Utils().getConfig()).preset;
+		}
+
+		return "PandaCrossing";
+	}
+
+	protected int getResultingDimension(final String text) {
+
+		try {
+			return QRGenerator.createQRCodeBitMatrix(text == null ? getPreset() : text, getDimension()).getWidth();
+		} catch (WriterException e) {
+			return 30;
+		}
+	}
+
+	protected long estimatedMilliseconds(final int dim) {
+
+		if (PandaCrossingMod.hasClothConfig2()) {
+			return (new ClothConfig2Utils().getConfig()).command_delay * (dim * dim);
 		}
 
 		return -1;

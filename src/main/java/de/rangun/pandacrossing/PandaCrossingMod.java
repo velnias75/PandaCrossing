@@ -32,8 +32,10 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import de.rangun.pandacrossing.commands.ICommandAsyncListener;
 import de.rangun.pandacrossing.commands.ICommandAsyncNotifier;
 import de.rangun.pandacrossing.commands.PCUndoCommand;
+import de.rangun.pandacrossing.commands.QRCalcCommand;
 import de.rangun.pandacrossing.commands.QRCommand;
 import de.rangun.pandacrossing.commands.QRCommandUsage;
+import de.rangun.pandacrossing.commands.QRPresetCommand;
 import de.rangun.pandacrossing.config.ClothConfig2Utils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
@@ -89,7 +91,16 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 		DISPATCHER.register(literal("qr").requires(source -> hasPermission(source))
 				.then(argument("text", greedyString()).executes(new QRCommand(this))).executes(new QRCommandUsage()));
 
+		DISPATCHER.register(
+				literal("qrcalc").then(argument("text", greedyString()).executes(new QRCalcCommand(this, false)))
+						.executes(new QRCalcCommand(this, true)));
+
 		DISPATCHER.register(literal("qrundo").redirect(undo));
+
+		if (ccu != null) {
+			DISPATCHER.register(
+					literal("qrpreset").requires(source -> hasPermission(source)).executes(new QRPresetCommand(this)));
+		}
 
 		if (ccu != null) {
 

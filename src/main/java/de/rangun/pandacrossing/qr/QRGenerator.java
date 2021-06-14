@@ -36,7 +36,7 @@ public final class QRGenerator {
 		void traverse(final int x, final int y, final boolean b) throws InterruptedException;
 	};
 
-	public static BitMatrix createQRCodeBitMatrix(final String qrCodeData) throws WriterException {
+	public static BitMatrix createQRCodeBitMatrix(final String qrCodeData, final int dimension) throws WriterException {
 
 		@SuppressWarnings("rawtypes")
 		final Map<EncodeHintType, Comparable> hintMap = new HashMap<EncodeHintType, Comparable>();
@@ -46,7 +46,7 @@ public final class QRGenerator {
 
 		return new QRCodeWriter().encode(
 				new String(qrCodeData.getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8), BarcodeFormat.QR_CODE,
-				1, 1, hintMap);
+				Math.max(1, dimension - 1), Math.max(1, dimension - 1), hintMap);
 	}
 
 	public static void traverseQRCode(final IBlockTraverser traverser, final BitMatrix matrix)
