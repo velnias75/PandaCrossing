@@ -42,6 +42,15 @@ abstract class AbstractCommandBase extends AbstractCommandAsyncNotifier {
 		return 0;
 	}
 
+	protected long estimatedMilliseconds() {
+
+		if (PandaCrossingMod.hasClothConfig2()) {
+			return (new ClothConfig2Utils().getConfig()).command_delay * (23l * 23l);
+		}
+
+		return -1;
+	}
+
 	protected static BlockPos nextPos(final Direction facing, final BlockPos curPos, final int x, final int y) {
 
 		final BlockPos nextPos;

@@ -19,12 +19,15 @@
 
 package de.rangun.pandacrossing.commands;
 
+import java.util.concurrent.TimeUnit;
+
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -36,7 +39,8 @@ public final class QRCommandUsage extends AbstractCommandBase implements Command
 
 	@Override
 	public int run(final CommandContext<FabricClientCommandSource> ctx) throws CommandSyntaxException {
-		ctx.getSource().sendFeedback(new LiteralText("Usage: ").formatted(Formatting.DARK_RED)
+
+		final MutableText usage = new LiteralText("Usage: ").formatted(Formatting.DARK_RED)
 				.append(new LiteralText("/qr [text]").formatted(Formatting.YELLOW).formatted(Formatting.ITALIC))
 				.append("\n")
 				.append(new LiteralText(
@@ -47,7 +51,24 @@ public final class QRCommandUsage extends AbstractCommandBase implements Command
 												.append(new LiteralText(" /qrundo").formatted(Formatting.YELLOW)
 														.formatted(Formatting.ITALIC)
 														.append(new LiteralText(" will undo the last creation.")
-																.formatted(Formatting.GRAY)))))));
+																.formatted(Formatting.RESET)
+																.formatted(Formatting.GRAY))))));
+
+		final long ms = estimatedMilliseconds();
+
+		if (ms > 0) {
+			usage.append("\n\n ")
+					.append(new LiteralText("Placing or undoing the QR code will take around: ")
+							.formatted(Formatting.GRAY))
+					.append(new LiteralText(String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(ms),
+							TimeUnit.MILLISECONDS.toMinutes(ms)
+									- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(ms)),
+							TimeUnit.MILLISECONDS.toSeconds(ms)
+									- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(ms))))
+											.formatted(Formatting.DARK_RED));
+		}
+
+		ctx.getSource().sendFeedback(usage);
 		return Command.SINGLE_SUCCESS;
 	}
 
