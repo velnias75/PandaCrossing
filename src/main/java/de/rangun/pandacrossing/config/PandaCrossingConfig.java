@@ -19,6 +19,8 @@
 
 package de.rangun.pandacrossing.config;
 
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
@@ -26,8 +28,25 @@ import me.shedaniel.autoconfig.annotation.ConfigEntry;
 @Config(name = "panda_crossing")
 @Config.Gui.Background(Config.Gui.Background.TRANSPARENT)
 public class PandaCrossingConfig implements ConfigData {
+
+	public enum ECL {
+
+		Low(ErrorCorrectionLevel.L), Medium(ErrorCorrectionLevel.M), Quartile(ErrorCorrectionLevel.Q),
+		High(ErrorCorrectionLevel.H);
+
+		public final ErrorCorrectionLevel level;
+
+		ECL(ErrorCorrectionLevel level) {
+			this.level = level;
+		}
+	};
+
 	@ConfigEntry.BoundedDiscrete(min = 1, max = 256)
 	public int dimension = 1;
+	@ConfigEntry.BoundedDiscrete(min = 0, max = 256)
+	public int margin = 1;
 	public String preset = "PandaCrossing";
+	@ConfigEntry.Gui.Tooltip(count = 4)
+	public ECL error_correction_level = ECL.Quartile;
 	public int command_delay = 0;
 }

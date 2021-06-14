@@ -25,6 +25,6 @@ Further *entities* and *block entities* are currently **NOT** restored.
 Dependencies
 ------------
 
-* [Cloth Config API](https://www.curseforge.com/minecraft/mc-mods/cloth-config) **recommended** for more control over the mod
+* [Cloth Config API](https://www.curseforge.com/minecraft/mc-mods/cloth-config) ** strongly recommended** for more control over the mod
 
 ![Screenshot of PandaCrossing](https://user-images.githubusercontent.com/4481414/120403323-42bff180-c344-11eb-8baa-7c0fa88aeea9.png)

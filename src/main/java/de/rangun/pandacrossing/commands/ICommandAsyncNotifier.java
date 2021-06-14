@@ -25,5 +25,7 @@ import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.text.Text;
 
 public interface ICommandAsyncNotifier {
+	String commandName();
+
 	Text feedbackText(final CommandContext<FabricClientCommandSource> ctx);
 }

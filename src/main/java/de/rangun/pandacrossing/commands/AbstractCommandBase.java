@@ -19,21 +19,36 @@
 
 package de.rangun.pandacrossing.commands;
 
+import java.util.Map;
+
 import com.google.zxing.WriterException;
 
 import de.rangun.pandacrossing.PandaCrossingMod;
 import de.rangun.pandacrossing.config.ClothConfig2Utils;
 import de.rangun.pandacrossing.qr.QRGenerator;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
 abstract class AbstractCommandBase extends AbstractCommandAsyncNotifier {
 
+	protected final Map<ICommandAsyncNotifier, Boolean> runningMap;
+
 	protected AbstractCommandBase() {
+		super();
+		runningMap = null;
 	}
 
 	protected AbstractCommandBase(ICommandAsyncListener l) {
 		super(l);
+		runningMap = null;
+	}
+
+	protected AbstractCommandBase(ICommandAsyncListener l, final Map<ICommandAsyncNotifier, Boolean> m) {
+		super(l);
+		runningMap = m;
 	}
 
 	protected int getDelay() {
@@ -79,6 +94,11 @@ abstract class AbstractCommandBase extends AbstractCommandAsyncNotifier {
 		}
 
 		return -1;
+	}
+
+	protected Text runningFeedback() {
+		return new LiteralText("Please wait until execution of last command is finished …")
+				.formatted(Formatting.DARK_RED).formatted(Formatting.ITALIC);
 	}
 
 	protected static BlockPos nextPos(final Direction facing, final BlockPos curPos, final int x, final int y) {

@@ -42,7 +42,13 @@ abstract class AbstractCommandAsyncNotifier implements ICommandAsyncNotifier {
 		this.ctx = ctx;
 	}
 
-	protected void notifyListeners() {
+	protected void notifyListenersRunning() {
+		for (final ICommandAsyncListener l : listener) {
+			l.commandRunning(this);
+		}
+	}
+
+	protected void notifyListenersFinished() {
 		for (final ICommandAsyncListener l : listener) {
 			l.commandFinished(this, ctx);
 		}

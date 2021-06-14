@@ -66,6 +66,11 @@ public final class QRCommandUsage extends AbstractQRStatsCommandBase implements 
 	}
 
 	@Override
+	public String commandName() {
+		return "QRCommandUsage";
+	}
+
+	@Override
 	public Text feedbackText(CommandContext<FabricClientCommandSource> ctx) {
 		return null;
 	}

@@ -19,14 +19,21 @@
 
 package de.rangun.pandacrossing.commands;
 
+import java.util.Map;
+
 import com.mojang.brigadier.context.CommandContext;
 
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 
 public final class QRPresetCommand extends QRCommand {
 
-	public QRPresetCommand(ICommandAsyncListener l) {
-		super(l);
+	public QRPresetCommand(ICommandAsyncListener l, Map<ICommandAsyncNotifier, Boolean> commandRunningMap) {
+		super(l, commandRunningMap);
+	}
+
+	@Override
+	public String commandName() {
+		return "QRPresetCommand";
 	}
 
 	@Override

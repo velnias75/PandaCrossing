@@ -30,6 +30,10 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
+import de.rangun.pandacrossing.PandaCrossingMod;
+import de.rangun.pandacrossing.config.ClothConfig2Utils;
+import de.rangun.pandacrossing.config.PandaCrossingConfig;
+
 public final class QRGenerator {
 
 	public interface IBlockTraverser {
@@ -41,8 +45,23 @@ public final class QRGenerator {
 		@SuppressWarnings("rawtypes")
 		final Map<EncodeHintType, Comparable> hintMap = new HashMap<EncodeHintType, Comparable>();
 
-		hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.Q);
-		hintMap.put(EncodeHintType.MARGIN, 1);
+		final ErrorCorrectionLevel level;
+		final int margin;
+
+		if (PandaCrossingMod.hasClothConfig2()) {
+
+			final PandaCrossingConfig ccu = (new ClothConfig2Utils()).getConfig();
+
+			level = ccu.error_correction_level.level;
+			margin = ccu.margin;
+
+		} else {
+			level = ErrorCorrectionLevel.Q;
+			margin = 1;
+		}
+
+		hintMap.put(EncodeHintType.ERROR_CORRECTION, level);
+		hintMap.put(EncodeHintType.MARGIN, margin);
 
 		return new QRCodeWriter().encode(
 				new String(qrCodeData.getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8), BarcodeFormat.QR_CODE,
