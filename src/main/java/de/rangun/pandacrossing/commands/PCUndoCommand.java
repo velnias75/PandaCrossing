@@ -21,6 +21,7 @@ package de.rangun.pandacrossing.commands;
 
 import static net.minecraft.util.registry.Registry.BLOCK;
 
+import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
@@ -59,8 +60,8 @@ public final class PCUndoCommand extends AbstractCommandBase implements Command<
 		}
 	}
 
-	public PCUndoCommand(ICommandAsyncListener l) {
-		super(l);
+	public PCUndoCommand(ICommandAsyncListener l, Map<ICommandAsyncNotifier, Boolean> commandRunningMap) {
+		super(l, commandRunningMap);
 	}
 
 	public static void generateUndoMatrix(final ClientPlayerEntity player, final Direction facing,
@@ -83,6 +84,7 @@ public final class PCUndoCommand extends AbstractCommandBase implements Command<
 				row = undoMatrix.get(y);
 				row.add(new UndoBlock(nextPos, world.getBlockState(nextPos)));
 			}
+
 		}, matrix);
 	}
 
@@ -127,6 +129,11 @@ public final class PCUndoCommand extends AbstractCommandBase implements Command<
 	}
 
 	@Override
+	public String commandName() {
+		return "PCUndo";
+	}
+
+	@Override
 	public Text feedbackText(final CommandContext<FabricClientCommandSource> ctx) {
 		return undoSuccess ? new TranslatableText("text.panda_crossing.undo.success").formatted(Formatting.BOLD)
 				: new TranslatableText("text.panda_crossing.undo.nothing").formatted(Formatting.DARK_RED)
@@ -140,14 +147,22 @@ public final class PCUndoCommand extends AbstractCommandBase implements Command<
 
 		final Runnable task = () -> {
 
-			try {
-				undoSuccess = applyUndoMatrix(ctx.getSource().getPlayer());
-			} catch (Exception e) {
-				ctx.getSource().sendFeedback(new LiteralText(e.getMessage()).formatted(Formatting.DARK_RED)
-						.formatted(Formatting.BOLD).formatted(Formatting.ITALIC));
-			}
+			if (runningMap.isEmpty()) {
 
-			notifyListeners();
+				notifyListenersRunning();
+
+				try {
+					undoSuccess = applyUndoMatrix(ctx.getSource().getPlayer());
+				} catch (Exception e) {
+					ctx.getSource().sendFeedback(new LiteralText(e.getMessage()).formatted(Formatting.DARK_RED)
+							.formatted(Formatting.BOLD).formatted(Formatting.ITALIC));
+				}
+
+				notifyListenersFinished();
+
+			} else {
+				ctx.getSource().sendFeedback(runningFeedback());
+			}
 		};
 
 		new Thread(task).start();

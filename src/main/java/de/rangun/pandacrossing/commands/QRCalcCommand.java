@@ -61,12 +61,17 @@ public final class QRCalcCommand extends AbstractQRStatsCommandBase implements C
 			this.dim = getResultingDimension(getQRText(context));
 			this.ms = estimatedMilliseconds(this.dim);
 
-			notifyListeners();
+			notifyListenersFinished();
 		};
 
 		new Thread(task).start();
 
 		return Command.SINGLE_SUCCESS;
+	}
+
+	@Override
+	public String commandName() {
+		return "QRCalc";
 	}
 
 	@Override

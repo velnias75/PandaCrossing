@@ -24,6 +24,9 @@ import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.DIS
 import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.literal;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.lwjgl.glfw.GLFW;
 
 import com.mojang.brigadier.context.CommandContext;
@@ -52,6 +55,8 @@ import net.minecraft.client.util.InputUtil;
 public final class PandaCrossingMod implements ClientModInitializer, ICommandAsyncListener {
 
 	private static KeyBinding keyBinding;
+
+	private Map<ICommandAsyncNotifier, Boolean> commandRunningMap = new HashMap<>();
 
 	public static boolean hasClothConfig2() {
 
@@ -85,11 +90,12 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 					InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_U, "category.panda_crossing.keys"));
 		}
 
-		final LiteralCommandNode<FabricClientCommandSource> undo = DISPATCHER.register(
-				literal("pcundo").requires(source -> hasPermission(source)).executes(new PCUndoCommand(this)));
+		final LiteralCommandNode<FabricClientCommandSource> undo = DISPATCHER.register(literal("pcundo")
+				.requires(source -> hasPermission(source)).executes(new PCUndoCommand(this, commandRunningMap)));
 
 		DISPATCHER.register(literal("qr").requires(source -> hasPermission(source))
-				.then(argument("text", greedyString()).executes(new QRCommand(this))).executes(new QRCommandUsage()));
+				.then(argument("text", greedyString()).executes(new QRCommand(this, commandRunningMap)))
+				.executes(new QRCommandUsage()));
 
 		DISPATCHER.register(
 				literal("qrcalc").then(argument("text", greedyString()).executes(new QRCalcCommand(this, false)))
@@ -98,8 +104,8 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 		DISPATCHER.register(literal("qrundo").redirect(undo));
 
 		if (ccu != null) {
-			DISPATCHER.register(
-					literal("qrpreset").requires(source -> hasPermission(source)).executes(new QRPresetCommand(this)));
+			DISPATCHER.register(literal("qrpreset").requires(source -> hasPermission(source))
+					.executes(new QRPresetCommand(this, commandRunningMap)));
 		}
 
 		if (ccu != null) {
@@ -119,11 +125,18 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 	}
 
 	@Override
+	public void commandRunning(final ICommandAsyncNotifier src) {
+		commandRunningMap.put(src, true);
+	}
+
+	@Override
 	public void commandFinished(final ICommandAsyncNotifier src, final CommandContext<FabricClientCommandSource> ctx) {
 
 		if (ctx == null)
 			throw new IllegalStateException("CommandContext has not been set in " + src.getClass().getName());
 
 		ctx.getSource().sendFeedback(src.feedbackText(ctx));
+
+		commandRunningMap.remove(src);
 	}
 }

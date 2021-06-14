@@ -4,7 +4,13 @@
 	"text.autoconfig.panda_crossing.title": "PandaCrossing Settings",
 	"text.autoconfig.panda_crossing.option.dimension": "Size (use /qrcalc to get resulting size)",
 	"text.autoconfig.panda_crossing.option.preset": "Preset text for /qrpreset command",
+	"text.autoconfig.panda_crossing.option.margin": "Width of margin around QR code",
 	"text.autoconfig.panda_crossing.option.command_delay": "Command delay (in milliseconds)",
+	"text.autoconfig.panda_crossing.option.error_correction_level": "Error correction level",
+	"text.autoconfig.panda_crossing.option.error_correction_level.@Tooltip[0]": "Low: ~7% correction",
+	"text.autoconfig.panda_crossing.option.error_correction_level.@Tooltip[1]": "Medium: ~15% correction",
+	"text.autoconfig.panda_crossing.option.error_correction_level.@Tooltip[2]": "Quartile: ~25% correction",
+	"text.autoconfig.panda_crossing.option.error_correction_level.@Tooltip[3]": "High: ~30% correction",
 	"text.panda_crossing.undo.success": "undo successful",
 	"text.panda_crossing.undo.nothing": "nothing to undo",
 	"text.panda_crossing.qrcommand.finished": "QR-Code processing finished."

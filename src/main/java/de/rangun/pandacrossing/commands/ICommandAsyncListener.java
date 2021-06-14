@@ -24,5 +24,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 
 public interface ICommandAsyncListener {
+	void commandRunning(final ICommandAsyncNotifier src);
+
 	void commandFinished(final ICommandAsyncNotifier src, final CommandContext<FabricClientCommandSource> ctx);
 }

@@ -24,6 +24,7 @@ import static net.minecraft.block.Blocks.BLACK_CONCRETE;
 import static net.minecraft.block.Blocks.WHITE_CONCRETE;
 import static net.minecraft.util.registry.Registry.BLOCK;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.google.zxing.common.BitMatrix;
@@ -48,8 +49,13 @@ public class QRCommand extends AbstractCommandBase implements Command<FabricClie
 	private final static String BLACK_CONCRETE_ID = BLOCK.getId(BLACK_CONCRETE).toString();
 	private final static String WHITE_CONCRETE_ID = BLOCK.getId(WHITE_CONCRETE).toString();
 
-	public QRCommand(final ICommandAsyncListener l) {
-		super(l);
+	public QRCommand(final ICommandAsyncListener l, Map<ICommandAsyncNotifier, Boolean> commandRunningMap) {
+		super(l, commandRunningMap);
+	}
+
+	@Override
+	public String commandName() {
+		return "QRCommand";
 	}
 
 	@Override
@@ -76,36 +82,44 @@ public class QRCommand extends AbstractCommandBase implements Command<FabricClie
 
 		final Runnable task = () -> {
 
-			try {
+			if (runningMap.isEmpty()) {
 
-				final BitMatrix matrix = QRGenerator.createQRCodeBitMatrix(txt, getDimension());
-				final Direction facing = player.getHorizontalFacing();
+				notifyListenersRunning();
 
-				PCUndoCommand.generateUndoMatrix(player, facing, curPos, matrix);
-				QRGenerator.traverseQRCode(new IBlockTraverser() {
+				try {
 
-					@Override
-					public void traverse(int x, int y, boolean b) throws InterruptedException {
+					final BitMatrix matrix = QRGenerator.createQRCodeBitMatrix(txt, getDimension());
+					final Direction facing = player.getHorizontalFacing();
 
-						final BlockPos nextPos = nextPos(facing, curPos, x, y);
+					PCUndoCommand.generateUndoMatrix(player, facing, curPos, matrix);
+					QRGenerator.traverseQRCode(new IBlockTraverser() {
 
-						player.sendChatMessage("/setblock " + nextPos.getX() + " " + nextPos.getY() + " "
-								+ nextPos.getZ() + " " + (b ? BLACK_CONCRETE_ID : WHITE_CONCRETE_ID) + " replace");
+						@Override
+						public void traverse(int x, int y, boolean b) throws InterruptedException {
 
-						if (delay > 0) {
-							TimeUnit.MILLISECONDS.sleep(delay);
+							final BlockPos nextPos = nextPos(facing, curPos, x, y);
+
+							player.sendChatMessage("/setblock " + nextPos.getX() + " " + nextPos.getY() + " "
+									+ nextPos.getZ() + " " + (b ? BLACK_CONCRETE_ID : WHITE_CONCRETE_ID) + " replace");
+
+							if (delay > 0) {
+								TimeUnit.MILLISECONDS.sleep(delay);
+							}
 						}
-					}
 
-				}, matrix);
+					}, matrix);
 
-			} catch (Exception e) {
-				ctx.getSource().sendFeedback(new LiteralText(e.getMessage()).formatted(Formatting.DARK_RED)
-						.formatted(Formatting.BOLD).formatted(Formatting.ITALIC));
-			}
+				} catch (Exception e) {
+					ctx.getSource().sendFeedback(new LiteralText(e.getMessage()).formatted(Formatting.DARK_RED)
+							.formatted(Formatting.BOLD).formatted(Formatting.ITALIC));
+				}
 
-			if (delay > 0) {
-				notifyListeners();
+				if (delay > 0) {
+					notifyListenersFinished();
+				}
+
+			} else {
+				ctx.getSource().sendFeedback(runningFeedback());
 			}
 		};
 
