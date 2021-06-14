@@ -25,13 +25,13 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.util.Formatting;
 
-public abstract class QRStatsCommandBase extends AbstractCommandBase {
+abstract class AbstractQRStatsCommandBase extends AbstractCommandBase {
 
-	public QRStatsCommandBase() {
+	protected AbstractQRStatsCommandBase() {
 		super();
 	}
 
-	public QRStatsCommandBase(ICommandAsyncListener l) {
+	protected AbstractQRStatsCommandBase(ICommandAsyncListener l) {
 		super(l);
 	}
 
@@ -47,7 +47,8 @@ public abstract class QRStatsCommandBase extends AbstractCommandBase {
 	}
 
 	protected String dimension(final int dim) {
-		return (new StringBuilder()).append(dim).append('x').append(dim).toString();
+		return (new StringBuilder()).append(dim).append('x').append(dim).append(" (requested size: ")
+				.append(getDimension()).append(')').toString();
 	}
 
 }

@@ -17,17 +17,21 @@
  * along with PandaCrossing.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.rangun.pandacrossing.config;
+package de.rangun.pandacrossing.commands;
 
-import me.shedaniel.autoconfig.ConfigData;
-import me.shedaniel.autoconfig.annotation.Config;
-import me.shedaniel.autoconfig.annotation.ConfigEntry;
+import com.mojang.brigadier.context.CommandContext;
 
-@Config(name = "panda_crossing")
-@Config.Gui.Background(Config.Gui.Background.TRANSPARENT)
-public class PandaCrossingConfig implements ConfigData {
-	@ConfigEntry.BoundedDiscrete(min = 1, max = 256)
-	public int dimension = 1;
-	public String preset = "PandaCrossing";
-	public int command_delay = 0;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+
+public final class QRPresetCommand extends QRCommand {
+
+	public QRPresetCommand(ICommandAsyncListener l) {
+		super(l);
+	}
+
+	@Override
+	protected String getText(CommandContext<FabricClientCommandSource> ctx) {
+		return getPreset();
+	}
+
 }

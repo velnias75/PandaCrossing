@@ -29,10 +29,10 @@ import net.minecraft.util.math.Direction;
 
 abstract class AbstractCommandBase extends AbstractCommandAsyncNotifier {
 
-	AbstractCommandBase() {
+	protected AbstractCommandBase() {
 	}
 
-	AbstractCommandBase(ICommandAsyncListener l) {
+	protected AbstractCommandBase(ICommandAsyncListener l) {
 		super(l);
 	}
 
@@ -54,17 +54,22 @@ abstract class AbstractCommandBase extends AbstractCommandAsyncNotifier {
 		return 1;
 	}
 
-	protected int getResultingDimension(final String text) {
+	protected String getPreset() {
 
 		if (PandaCrossingMod.hasClothConfig2()) {
-			try {
-				return QRGenerator.createQRCodeBitMatrix(text == null ? "PandaCrossing" : text,
-						(new ClothConfig2Utils().getConfig()).dimension).getWidth();
-			} catch (WriterException e) {
-			}
+			return (new ClothConfig2Utils().getConfig()).preset;
 		}
 
-		return 30;
+		return "PandaCrossing";
+	}
+
+	protected int getResultingDimension(final String text) {
+
+		try {
+			return QRGenerator.createQRCodeBitMatrix(text == null ? getPreset() : text, getDimension()).getWidth();
+		} catch (WriterException e) {
+			return 30;
+		}
 	}
 
 	protected long estimatedMilliseconds(final int dim) {

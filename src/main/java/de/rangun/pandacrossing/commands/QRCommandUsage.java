@@ -29,7 +29,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-public final class QRCommandUsage extends QRStatsCommandBase implements Command<FabricClientCommandSource> {
+public final class QRCommandUsage extends AbstractQRStatsCommandBase implements Command<FabricClientCommandSource> {
 
 	public QRCommandUsage() {
 		super();

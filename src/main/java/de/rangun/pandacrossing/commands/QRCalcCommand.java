@@ -31,13 +31,24 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-public final class QRCalcCommand extends QRStatsCommandBase implements Command<FabricClientCommandSource> {
+public final class QRCalcCommand extends AbstractQRStatsCommandBase implements Command<FabricClientCommandSource> {
 
+	private final boolean usePreset;
 	private int dim;
 	private long ms;
 
-	public QRCalcCommand(final ICommandAsyncListener l) {
+	public QRCalcCommand(final ICommandAsyncListener l, boolean usePreset) {
 		super(l);
+		this.usePreset = usePreset;
+	}
+
+	private String getQRText(CommandContext<FabricClientCommandSource> context) {
+
+		if (usePreset) {
+			return getPreset();
+		}
+
+		return getString(context, "text");
 	}
 
 	@Override
@@ -47,7 +58,7 @@ public final class QRCalcCommand extends QRStatsCommandBase implements Command<F
 
 		final Runnable task = () -> {
 
-			this.dim = getResultingDimension(getString(context, "text"));
+			this.dim = getResultingDimension(getQRText(context));
 			this.ms = estimatedMilliseconds(this.dim);
 
 			notifyListeners();
@@ -62,9 +73,8 @@ public final class QRCalcCommand extends QRStatsCommandBase implements Command<F
 	public Text feedbackText(CommandContext<FabricClientCommandSource> ctx) {
 
 		MutableText usage = new LiteralText("The created QR code of ").formatted(Formatting.GRAY)
-				.append(new LiteralText("\"" + getString(ctx, "text") + "\"").formatted(Formatting.ITALIC))
-				.append(" will be ").append(new LiteralText(dimension(dim)).formatted(Formatting.ITALIC))
-				.append(" blocks.");
+				.append(new LiteralText("\"" + getQRText(ctx) + "\"").formatted(Formatting.ITALIC)).append(" will be ")
+				.append(new LiteralText(dimension(dim)).formatted(Formatting.ITALIC)).append(" blocks.");
 
 		if (ms > 0) {
 			usage = timeText(usage.append("\n"), ms);

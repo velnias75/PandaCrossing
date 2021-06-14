@@ -34,15 +34,15 @@ abstract class AbstractCommandAsyncNotifier implements ICommandAsyncNotifier {
 	protected AbstractCommandAsyncNotifier() {
 	}
 
-	AbstractCommandAsyncNotifier(final ICommandAsyncListener l) {
+	protected AbstractCommandAsyncNotifier(final ICommandAsyncListener l) {
 		listener.add(l);
 	}
 
-	void setCommandContext(final CommandContext<FabricClientCommandSource> ctx) {
+	protected void setCommandContext(final CommandContext<FabricClientCommandSource> ctx) {
 		this.ctx = ctx;
 	}
 
-	void notifyListeners() {
+	protected void notifyListeners() {
 		for (final ICommandAsyncListener l : listener) {
 			l.commandFinished(this, ctx);
 		}

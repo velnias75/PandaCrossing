@@ -43,7 +43,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
-public final class QRCommand extends AbstractCommandBase implements Command<FabricClientCommandSource> {
+public class QRCommand extends AbstractCommandBase implements Command<FabricClientCommandSource> {
 
 	private final static String BLACK_CONCRETE_ID = BLOCK.getId(BLACK_CONCRETE).toString();
 	private final static String WHITE_CONCRETE_ID = BLOCK.getId(WHITE_CONCRETE).toString();
@@ -57,10 +57,14 @@ public final class QRCommand extends AbstractCommandBase implements Command<Fabr
 		return new TranslatableText("text.panda_crossing.qrcommand.finished");
 	}
 
+	protected String getText(final CommandContext<FabricClientCommandSource> ctx) {
+		return getString(ctx, "text");
+	}
+
 	@Override
 	public int run(final CommandContext<FabricClientCommandSource> ctx) throws CommandSyntaxException {
 
-		final String txt = getString(ctx, "text");
+		final String txt = getText(ctx);
 
 		final int delay = getDelay();
 
