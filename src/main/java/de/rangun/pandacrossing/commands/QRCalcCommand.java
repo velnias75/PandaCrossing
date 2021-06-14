@@ -19,6 +19,8 @@
 
 package de.rangun.pandacrossing.commands;
 
+import static com.mojang.brigadier.arguments.StringArgumentType.getString;
+
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -29,45 +31,46 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-public final class QRCommandUsage extends QRStatsCommandBase implements Command<FabricClientCommandSource> {
+public final class QRCalcCommand extends QRStatsCommandBase implements Command<FabricClientCommandSource> {
 
-	public QRCommandUsage() {
-		super();
+	private int dim;
+	private long ms;
+
+	public QRCalcCommand(final ICommandAsyncListener l) {
+		super(l);
 	}
 
 	@Override
-	public int run(final CommandContext<FabricClientCommandSource> ctx) throws CommandSyntaxException {
+	public int run(CommandContext<FabricClientCommandSource> context) throws CommandSyntaxException {
 
-		final int rd = getResultingDimension(null);
+		setCommandContext(context);
 
-		final MutableText usage = new LiteralText("Usage: ").formatted(Formatting.DARK_RED)
-				.append(new LiteralText("/qr [text]").formatted(Formatting.YELLOW).formatted(Formatting.ITALIC))
-				.append("\n")
-				.append(new LiteralText(" creates a ca. " + dimension(rd)
-						+ " (depending on [text]) blocks horizontal concrete QR code with the bottom left corner below the player\'s feet, representing ")
-								.formatted(Formatting.GRAY)
-								.append(new LiteralText("text").formatted(Formatting.ITALIC)
-										.append(new LiteralText(".").append("\n")
-												.append(new LiteralText(" /qrundo").formatted(Formatting.YELLOW)
-														.formatted(Formatting.ITALIC)
-														.append(new LiteralText(" will undo the last creation.")
-																.formatted(Formatting.RESET)
-																.formatted(Formatting.GRAY))))));
+		final Runnable task = () -> {
 
-		final long ms = estimatedMilliseconds(rd);
+			this.dim = getResultingDimension(getString(context, "text"));
+			this.ms = estimatedMilliseconds(this.dim);
 
-		if (ms > 0) {
-			timeText(usage.append("\n\n "), ms);
-		}
+			notifyListeners();
+		};
 
-		ctx.getSource().sendFeedback(usage);
+		new Thread(task).start();
 
 		return Command.SINGLE_SUCCESS;
 	}
 
 	@Override
 	public Text feedbackText(CommandContext<FabricClientCommandSource> ctx) {
-		return null;
+
+		MutableText usage = new LiteralText("The created QR code of ").formatted(Formatting.GRAY)
+				.append(new LiteralText("\"" + getString(ctx, "text") + "\"").formatted(Formatting.ITALIC))
+				.append(" will be ").append(new LiteralText(dimension(dim)).formatted(Formatting.ITALIC))
+				.append(" blocks.");
+
+		if (ms > 0) {
+			usage = timeText(usage.append("\n"), ms);
+		}
+
+		return usage;
 	}
 
 }

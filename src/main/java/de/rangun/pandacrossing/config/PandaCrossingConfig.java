@@ -21,9 +21,12 @@ package de.rangun.pandacrossing.config;
 
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
+import me.shedaniel.autoconfig.annotation.ConfigEntry;
 
 @Config(name = "panda_crossing")
 @Config.Gui.Background(Config.Gui.Background.TRANSPARENT)
 public class PandaCrossingConfig implements ConfigData {
+	@ConfigEntry.BoundedDiscrete(min = 1, max = 256)
+	public int dimension = 1;
 	public int command_delay = 0;
 }

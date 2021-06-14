@@ -74,7 +74,7 @@ public final class QRCommand extends AbstractCommandBase implements Command<Fabr
 
 			try {
 
-				final BitMatrix matrix = QRGenerator.createQRCodeBitMatrix(txt);
+				final BitMatrix matrix = QRGenerator.createQRCodeBitMatrix(txt, getDimension());
 				final Direction facing = player.getHorizontalFacing();
 
 				PCUndoCommand.generateUndoMatrix(player, facing, curPos, matrix);
