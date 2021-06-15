@@ -51,9 +51,11 @@ dependencies {
         exclude module: "modmenu"
     }
     
-	modImplementation ("com.terraformersmc:modmenu:${project.modmenu_version}") {
-		exclude(group : "net.fabricmc.fabric-api")
+	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}") {
+		exclude(group: "net.fabricmc.fabric-api")
 	}
+	
+	modImplementation "com.google.code.findbugs:annotations:${project.findbugs_version}"
 }
 
 minecraft {

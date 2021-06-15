@@ -43,25 +43,23 @@ public final class QRGenerator {
 	public static BitMatrix createQRCodeBitMatrix(final String qrCodeData, final int dimension) throws WriterException {
 
 		@SuppressWarnings("rawtypes")
-		final Map<EncodeHintType, Comparable> hintMap = new HashMap<EncodeHintType, Comparable>();
-
-		final ErrorCorrectionLevel level;
-		final int margin;
+		final Map<EncodeHintType, Comparable> hintMap = new HashMap<>(2);
 
 		if (PandaCrossingMod.hasClothConfig2()) {
 
 			final PandaCrossingConfig ccu = (new ClothConfig2Utils()).getConfig();
 
-			level = ccu.error_correction_level.level;
-			margin = ccu.margin;
+			hintMap.put(EncodeHintType.ERROR_CORRECTION, ccu.error_correction_level.level);
+
+//			if (ccu.margin > 0) {
+//				hintMap.put(EncodeHintType.MARGIN, ccu.margin);
+//			}
+			hintMap.put(EncodeHintType.MARGIN, 1);
 
 		} else {
-			level = ErrorCorrectionLevel.Q;
-			margin = 1;
+			hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.Q);
+			hintMap.put(EncodeHintType.MARGIN, 1);
 		}
-
-		hintMap.put(EncodeHintType.ERROR_CORRECTION, level);
-		hintMap.put(EncodeHintType.MARGIN, margin);
 
 		return new QRCodeWriter().encode(
 				new String(qrCodeData.getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8), BarcodeFormat.QR_CODE,

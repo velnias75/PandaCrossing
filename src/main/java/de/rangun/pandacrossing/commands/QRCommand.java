@@ -40,14 +40,15 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
 public class QRCommand extends AbstractCommandBase implements Command<FabricClientCommandSource> {
 
-	private final static String BLACK_CONCRETE_ID = BLOCK.getId(BLACK_CONCRETE).toString();
-	private final static String WHITE_CONCRETE_ID = BLOCK.getId(WHITE_CONCRETE).toString();
+	private final static Identifier BLACK_CONCRETE_ID = BLOCK.getId(BLACK_CONCRETE);
+	private final static Identifier WHITE_CONCRETE_ID = BLOCK.getId(WHITE_CONCRETE);
 
 	public QRCommand(final ICommandAsyncListener l, Map<ICommandAsyncNotifier, Boolean> commandRunningMap) {
 		super(l, commandRunningMap);
@@ -100,7 +101,8 @@ public class QRCommand extends AbstractCommandBase implements Command<FabricClie
 							final BlockPos nextPos = nextPos(facing, curPos, x, y);
 
 							player.sendChatMessage("/setblock " + nextPos.getX() + " " + nextPos.getY() + " "
-									+ nextPos.getZ() + " " + (b ? BLACK_CONCRETE_ID : WHITE_CONCRETE_ID) + " replace");
+									+ nextPos.getZ() + " "
+									+ (b ? BLACK_CONCRETE_ID.toString() : WHITE_CONCRETE_ID.toString()) + " replace");
 
 							if (delay > 0) {
 								TimeUnit.MILLISECONDS.sleep(delay);

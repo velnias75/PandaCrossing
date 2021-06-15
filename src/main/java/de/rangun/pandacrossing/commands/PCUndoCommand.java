@@ -46,7 +46,7 @@ import net.minecraft.world.World;
 
 public final class PCUndoCommand extends AbstractCommandBase implements Command<FabricClientCommandSource> {
 
-	private static Vector<Vector<UndoBlock>> undoMatrix = null;
+	private volatile static Vector<Vector<UndoBlock>> undoMatrix = null;
 	private boolean undoSuccess = false;
 
 	private static class UndoBlock {

@@ -43,8 +43,8 @@ public class PandaCrossingConfig implements ConfigData {
 
 	@ConfigEntry.BoundedDiscrete(min = 1, max = 256)
 	public int dimension = 1;
-	@ConfigEntry.BoundedDiscrete(min = 0, max = 256)
-	public int margin = 1;
+//	@ConfigEntry.BoundedDiscrete(min = 0, max = 256)
+//	public int margin = 1;
 	public String preset = "PandaCrossing";
 	@ConfigEntry.Gui.Tooltip(count = 4)
 	public ECL error_correction_level = ECL.Quartile;
