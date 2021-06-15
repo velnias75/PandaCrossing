@@ -34,6 +34,7 @@ import org.lwjgl.glfw.GLFW;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 
+import de.rangun.pandacrossing.commands.AbstractCommandBase.QRDirection;
 import de.rangun.pandacrossing.commands.ICommandAsyncListener;
 import de.rangun.pandacrossing.commands.ICommandAsyncNotifier;
 import de.rangun.pandacrossing.commands.PCUndoCommand;
@@ -134,7 +135,8 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 						.executes(new PCUndoCommand(this, commandRunningMap)));
 
 		DISPATCHER.register(literal("qr").requires(source -> hasPermission(source.getClient().player))
-				.then(argument("text", greedyString()).executes(new QRCommand(this, commandRunningMap)))
+				.then(argument("text", greedyString())
+						.executes(new QRCommand(this, commandRunningMap, QRDirection.Horizontal)))
 				.executes(new QRCommandUsage()));
 
 		DISPATCHER.register(
@@ -145,8 +147,22 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 
 		if (ccu != null) {
 			DISPATCHER.register(literal("qrpreset").requires(source -> hasPermission(source.getClient().player))
-					.executes(new QRPresetCommand(this, commandRunningMap)));
+					.executes(new QRPresetCommand(this, commandRunningMap, QRDirection.Horizontal)));
 		}
+
+		DISPATCHER.register(literal("vqrpreset").requires(source -> hasPermission(source.getClient().player))
+				.executes(new QRPresetCommand(this, commandRunningMap, QRDirection.Vertical)));
+
+		DISPATCHER.register(literal("vqr").requires(source -> hasPermission(source.getClient().player))
+				.then(argument("text", greedyString())
+						.executes(new QRCommand(this, commandRunningMap, QRDirection.Vertical))));
+
+		DISPATCHER.register(literal("sqrpreset").requires(source -> hasPermission(source.getClient().player))
+				.executes(new QRPresetCommand(this, commandRunningMap, QRDirection.Stairway)));
+
+		DISPATCHER.register(literal("sqr").requires(source -> hasPermission(source.getClient().player))
+				.then(argument("text", greedyString())
+						.executes(new QRCommand(this, commandRunningMap, QRDirection.Stairway))));
 
 		if (ccu != null) {
 

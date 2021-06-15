@@ -28,8 +28,9 @@ import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 
 public final class QRPresetCommand extends QRCommand {
 
-	public QRPresetCommand(PandaCrossingMod mod, Map<ICommandAsyncNotifier, Boolean> commandRunningMap) {
-		super(mod, commandRunningMap);
+	public QRPresetCommand(PandaCrossingMod mod, Map<ICommandAsyncNotifier, Boolean> commandRunningMap,
+			QRDirection dir) {
+		super(mod, commandRunningMap, dir);
 	}
 
 	@Override
