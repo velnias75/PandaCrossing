@@ -24,7 +24,7 @@ import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.DIS
 import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.literal;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.lwjgl.glfw.GLFW;
@@ -63,7 +63,7 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 
 	private static KeyBinding keyBinding;
 
-	private Map<ICommandAsyncNotifier, Boolean> commandRunningMap = new HashMap<>();
+	private Map<ICommandAsyncNotifier, Boolean> commandRunningMap = new LinkedHashMap<>(10);
 
 	public static boolean hasClothConfig2() {
 

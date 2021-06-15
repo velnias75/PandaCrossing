@@ -108,7 +108,7 @@ public class QRCommand extends AbstractCommandBase implements Command<FabricClie
 						}
 					}
 
-					PCUndoCommand.generateUndoMatrix(player, facing, curPos, matrix);
+					PCUndoCommand.pushUndoMatrix(player, facing, curPos, matrix);
 					QRGenerator.traverseQRCode(new IBlockTraverser() {
 
 						@Override
