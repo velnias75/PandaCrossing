@@ -34,9 +34,13 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
-abstract class AbstractCommandBase extends AbstractCommandAsyncNotifier {
+public abstract class AbstractCommandBase extends AbstractCommandAsyncNotifier {
 
 	protected final Map<ICommandAsyncNotifier, Boolean> runningMap;
+
+	public static enum QRDirection {
+		Horizontal, Vertical, Stairway
+	};
 
 	protected AbstractCommandBase() {
 		super();
@@ -108,22 +112,27 @@ abstract class AbstractCommandBase extends AbstractCommandAsyncNotifier {
 				.formatted(Formatting.DARK_RED).formatted(Formatting.ITALIC);
 	}
 
-	protected static BlockPos nextPos(final Direction facing, final BlockPos curPos, final int x, final int y) {
+	protected static BlockPos nextPos(final QRDirection dir, final Direction facing, final BlockPos curPos, final int x,
+			final int y) {
 
 		final BlockPos nextPos;
 
 		switch (facing) {
 		case WEST:
-			nextPos = curPos.add(y * -1, 0, x * -1);
+			nextPos = curPos.add((dir == QRDirection.Horizontal || dir == QRDirection.Stairway) ? y * -1 : 0,
+					(dir == QRDirection.Horizontal) ? 0 : y, x * -1);
 			break;
 		case EAST:
-			nextPos = curPos.add(y, 0, x);
+			nextPos = curPos.add((dir == QRDirection.Horizontal || dir == QRDirection.Stairway) ? y : 0,
+					(dir == QRDirection.Horizontal) ? 0 : y, x);
 			break;
 		case NORTH:
-			nextPos = curPos.add(x, 0, y * -1);
+			nextPos = curPos.add(x, dir == QRDirection.Horizontal ? 0 : y,
+					(dir == QRDirection.Horizontal || dir == QRDirection.Stairway) ? y * -1 : 0);
 			break;
 		default:
-			nextPos = curPos.add(x * -1, 0, y);
+			nextPos = curPos.add(x * -1, dir == QRDirection.Horizontal ? 0 : y,
+					(dir == QRDirection.Horizontal || dir == QRDirection.Stairway) ? y : 0);
 			break;
 		}
 

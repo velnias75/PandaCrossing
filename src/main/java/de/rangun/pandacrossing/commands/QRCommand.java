@@ -38,7 +38,9 @@ import de.rangun.pandacrossing.config.ConfigException;
 import de.rangun.pandacrossing.qr.QRGenerator;
 import de.rangun.pandacrossing.qr.QRGenerator.IBlockTraverser;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.minecraft.block.Block;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
@@ -51,8 +53,12 @@ public class QRCommand extends AbstractCommandBase implements Command<FabricClie
 	private final static Identifier BLACK_CONCRETE_ID = BLOCK.getId(BLACK_CONCRETE);
 	private final static Identifier WHITE_CONCRETE_ID = BLOCK.getId(WHITE_CONCRETE);
 
-	public QRCommand(final PandaCrossingMod mod, Map<ICommandAsyncNotifier, Boolean> commandRunningMap) {
+	private final QRDirection dir;
+
+	public QRCommand(final PandaCrossingMod mod, Map<ICommandAsyncNotifier, Boolean> commandRunningMap,
+			final QRDirection dir) {
 		super(mod, commandRunningMap);
+		this.dir = dir;
 	}
 
 	@Override
@@ -69,6 +75,39 @@ public class QRCommand extends AbstractCommandBase implements Command<FabricClie
 		return getString(ctx, "text");
 	}
 
+	private BlockPos curPos(final QRDirection dir, final ClientPlayerEntity player) {
+		final Vec3d playerPos = player.getPos();
+
+		if (dir == QRDirection.Vertical) {
+
+			switch (player.getHorizontalFacing()) {
+			case WEST:
+				return new BlockPos(playerPos.getX() - 1.0d, playerPos.getY(), playerPos.getZ());
+			case EAST:
+				return new BlockPos(playerPos.getX() + 1.0d, playerPos.getY(), playerPos.getZ());
+			case NORTH:
+				return new BlockPos(playerPos.getX(), playerPos.getY(), playerPos.getZ() - 1.0d);
+			default:
+				return new BlockPos(playerPos.getX(), playerPos.getY(), playerPos.getZ() + 1.0d);
+			}
+
+		}
+
+		return new BlockPos(playerPos.getX(), playerPos.getY() - 1.0d, playerPos.getZ());
+	}
+
+	private StringBuilder blockState(final String blockid, final Direction facing) {
+
+		final Block block = BLOCK.get(Identifier.tryParse(blockid));
+
+		if (block != null && block.getDefaultState().contains(
+				DirectionProperty.of("facing", Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST))) {
+			return (new StringBuilder("[facing=")).append(facing.asString()).append(']');
+		}
+
+		return new StringBuilder();
+	}
+
 	@Override
 	public int run(final CommandContext<FabricClientCommandSource> ctx) throws CommandSyntaxException {
 
@@ -77,8 +116,7 @@ public class QRCommand extends AbstractCommandBase implements Command<FabricClie
 		final int delay = getDelay();
 
 		final ClientPlayerEntity player = ctx.getSource().getPlayer();
-		final Vec3d playerPos = player.getPos();
-		final BlockPos curPos = new BlockPos(playerPos.getX(), playerPos.getY() - 1.0d, playerPos.getZ());
+		final BlockPos curPos = curPos(dir, player);
 
 		setCommandContext(ctx);
 
@@ -108,16 +146,19 @@ public class QRCommand extends AbstractCommandBase implements Command<FabricClie
 						}
 					}
 
-					PCUndoCommand.pushUndoMatrix(player, facing, curPos, matrix);
+					PCUndoCommand.pushUndoMatrix(player, dir, facing, curPos, matrix);
 					QRGenerator.traverseQRCode(new IBlockTraverser() {
 
 						@Override
 						public void traverse(int x, int y, boolean b) throws InterruptedException {
 
-							final BlockPos nextPos = nextPos(facing, curPos, x, y);
+							final BlockPos nextPos = nextPos(dir, facing, curPos, x, y);
 
-							player.sendChatMessage("/setblock " + nextPos.getX() + " " + nextPos.getY() + " "
-									+ nextPos.getZ() + " " + (b ? black_material : white_material) + " replace");
+							player.sendChatMessage((new StringBuilder("/setblock ")).append(nextPos.getX()).append(' ')
+									.append(nextPos.getY()).append(' ').append(nextPos.getZ()).append(' ')
+									.append((b ? black_material : white_material))
+									.append(blockState(b ? black_material : white_material, facing)).append(" replace")
+									.toString());
 
 							if (delay > 0) {
 								TimeUnit.MILLISECONDS.sleep(delay);

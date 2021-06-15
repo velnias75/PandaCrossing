@@ -69,8 +69,8 @@ public final class PCUndoCommand extends AbstractCommandBase
 		mod.registerCleanUpListener(this);
 	}
 
-	public static void pushUndoMatrix(final ClientPlayerEntity player, final Direction facing, final BlockPos curPos,
-			final BitMatrix matrix) throws InterruptedException {
+	public static void pushUndoMatrix(final ClientPlayerEntity player, final QRDirection dir, final Direction facing,
+			final BlockPos curPos, final BitMatrix matrix) throws InterruptedException {
 
 		undoMatrixStack.push(new Vector<Vector<UndoBlock>>(matrix.getHeight()));
 
@@ -81,7 +81,7 @@ public final class PCUndoCommand extends AbstractCommandBase
 			@Override
 			public void traverse(int x, int y, boolean b) {
 
-				final BlockPos nextPos = nextPos(facing, curPos, x, y);
+				final BlockPos nextPos = nextPos(dir, facing, curPos, x, y);
 
 				Vector<UndoBlock> row = new Vector<UndoBlock>(matrix.getWidth());
 				undoMatrixStack.peek().add(row);

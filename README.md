@@ -1,16 +1,16 @@
 # PandaCrossing [![Build Status](https://travis-ci.com/velnias75/PandaCrossing.svg?branch=main)](https://travis-ci.com/velnias75/PandaCrossing)
 A *Fabric Mod* to create QR codes
 
-This simple mod creates a horizontal QR code with the bottom left corner below the player's feet, representing *a given text*.
+This simple mod creates a horizontal, vertical or stairway QR code with the bottom left corner below the player's feet resp. in front of the player, representing *a given text*.
 
 With [Cloth Config API](https://www.curseforge.com/minecraft/mc-mods/cloth-config) you can use any material, else black and white concrete is used.
 
 Commands
 --------
 
-* `/qr [text]` creates the QR code resp. shows the usage if no *text* is provided
+* `/qr [text]`, `/vqr [text]`, `/sqr [text]` creates the QR code resp. `/qr [text]` shows the usage if no *text* is provided
 * `/qrcalc [text]` calculates the dimensions of the resulting QR code
-* `/qrundo` or `/pcundo` undoes the last creation
+* `/qrundo` or `/pcundo` undoes the last creation in reverse order of creation
 
 To get examples for how to use *text* see https://github.com/zxing/zxing/wiki/Barcode-Contents
 
