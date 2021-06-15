@@ -1,7 +1,9 @@
 # PandaCrossing [![Build Status](https://travis-ci.com/velnias75/PandaCrossing.svg?branch=main)](https://travis-ci.com/velnias75/PandaCrossing)
 A *Fabric Mod* to create QR codes
 
-This simple mod creates a horizontal concrete QR code with the bottom left corner below the player's feet, representing *a given text*.
+This simple mod creates a horizontal QR code with the bottom left corner below the player's feet, representing *a given text*.
+
+With [Cloth Config API](https://www.curseforge.com/minecraft/mc-mods/cloth-config) you can use any material, else black and white concrete is used.
 
 Commands
 --------

@@ -32,6 +32,9 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import de.rangun.pandacrossing.PandaCrossingMod;
+import de.rangun.pandacrossing.config.ClothConfig2Utils;
+import de.rangun.pandacrossing.config.ConfigException;
 import de.rangun.pandacrossing.qr.QRGenerator;
 import de.rangun.pandacrossing.qr.QRGenerator.IBlockTraverser;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
@@ -90,6 +93,21 @@ public class QRCommand extends AbstractCommandBase implements Command<FabricClie
 					final BitMatrix matrix = QRGenerator.createQRCodeBitMatrix(txt, getDimension());
 					final Direction facing = player.getHorizontalFacing();
 
+					final ClothConfig2Utils ccu = PandaCrossingMod.hasClothConfig2() ? (new ClothConfig2Utils()) : null;
+					final String black_material = ccu != null ? ccu.getBlackMaterial() : BLACK_CONCRETE_ID.toString();
+					final String white_material = ccu != null ? ccu.getWhiteMaterial() : WHITE_CONCRETE_ID.toString();
+
+					if (ccu != null) {
+
+						if (!ccu.getConfig().isValidMaterial(black_material)) {
+							throw new ConfigException("no such black material: " + black_material);
+						}
+
+						if (!ccu.getConfig().isValidMaterial(white_material)) {
+							throw new ConfigException("no such white material: " + white_material);
+						}
+					}
+
 					PCUndoCommand.generateUndoMatrix(player, facing, curPos, matrix);
 					QRGenerator.traverseQRCode(new IBlockTraverser() {
 
@@ -99,8 +117,7 @@ public class QRCommand extends AbstractCommandBase implements Command<FabricClie
 							final BlockPos nextPos = nextPos(facing, curPos, x, y);
 
 							player.sendChatMessage("/setblock " + nextPos.getX() + " " + nextPos.getY() + " "
-									+ nextPos.getZ() + " "
-									+ (b ? BLACK_CONCRETE_ID.toString() : WHITE_CONCRETE_ID.toString()) + " replace");
+									+ nextPos.getZ() + " " + (b ? black_material : white_material) + " replace");
 
 							if (delay > 0) {
 								TimeUnit.MILLISECONDS.sleep(delay);

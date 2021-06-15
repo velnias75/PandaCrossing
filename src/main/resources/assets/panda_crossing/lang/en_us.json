@@ -5,6 +5,8 @@
 	"text.autoconfig.panda_crossing.option.dimension": "Size (use /qrcalc to get resulting size)",
 	"text.autoconfig.panda_crossing.option.preset": "Preset text for /qrpreset command",
 	"text.autoconfig.panda_crossing.option.margin": "Width of margin around QR code",
+	"text.autoconfig.panda_crossing.option.material_black": "Material to use for black parts",
+	"text.autoconfig.panda_crossing.option.material_white": "Material to use for white parts",
 	"text.autoconfig.panda_crossing.option.command_delay": "Command delay (in milliseconds)",
 	"text.autoconfig.panda_crossing.option.error_correction_level": "Error correction level",
 	"text.autoconfig.panda_crossing.option.error_correction_level.@Tooltip[0]": "Low: ~7% correction",

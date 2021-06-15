@@ -36,4 +36,12 @@ public final class ClothConfig2Utils {
 	public PandaCrossingConfig getConfig() {
 		return AutoConfig.getConfigHolder(PandaCrossingConfig.class).getConfig();
 	}
+
+	public String getBlackMaterial() {
+		return getConfig().material_black;
+	}
+
+	public String getWhiteMaterial() {
+		return getConfig().material_white;
+	}
 }
