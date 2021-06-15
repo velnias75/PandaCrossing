@@ -38,7 +38,9 @@ import de.rangun.pandacrossing.config.ConfigException;
 import de.rangun.pandacrossing.qr.QRGenerator;
 import de.rangun.pandacrossing.qr.QRGenerator.IBlockTraverser;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.minecraft.block.Block;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
@@ -94,6 +96,18 @@ public class QRCommand extends AbstractCommandBase implements Command<FabricClie
 		return new BlockPos(playerPos.getX(), playerPos.getY() - 1.0d, playerPos.getZ());
 	}
 
+	private StringBuilder blockState(final String blockid, final Direction facing) {
+
+		final Block block = BLOCK.get(Identifier.tryParse(blockid));
+
+		if (block != null && block.getDefaultState().contains(
+				DirectionProperty.of("facing", Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST))) {
+			return (new StringBuilder("[facing=")).append(facing.asString()).append(']');
+		}
+
+		return new StringBuilder();
+	}
+
 	@Override
 	public int run(final CommandContext<FabricClientCommandSource> ctx) throws CommandSyntaxException {
 
@@ -140,8 +154,11 @@ public class QRCommand extends AbstractCommandBase implements Command<FabricClie
 
 							final BlockPos nextPos = nextPos(dir, facing, curPos, x, y);
 
-							player.sendChatMessage("/setblock " + nextPos.getX() + " " + nextPos.getY() + " "
-									+ nextPos.getZ() + " " + (b ? black_material : white_material) + " replace");
+							player.sendChatMessage((new StringBuilder("/setblock ")).append(nextPos.getX()).append(' ')
+									.append(nextPos.getY()).append(' ').append(nextPos.getZ()).append(' ')
+									.append((b ? black_material : white_material))
+									.append(blockState(b ? black_material : white_material, facing)).append(" replace")
+									.toString());
 
 							if (delay > 0) {
 								TimeUnit.MILLISECONDS.sleep(delay);
