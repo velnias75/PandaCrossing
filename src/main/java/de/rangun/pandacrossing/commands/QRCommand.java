@@ -32,22 +32,24 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import de.rangun.pandacrossing.PandaCrossingMod;
+import de.rangun.pandacrossing.config.ClothConfig2Utils;
+import de.rangun.pandacrossing.config.ConfigException;
 import de.rangun.pandacrossing.qr.QRGenerator;
 import de.rangun.pandacrossing.qr.QRGenerator.IBlockTraverser;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
 public class QRCommand extends AbstractCommandBase implements Command<FabricClientCommandSource> {
 
-	private final static String BLACK_CONCRETE_ID = BLOCK.getId(BLACK_CONCRETE).toString();
-	private final static String WHITE_CONCRETE_ID = BLOCK.getId(WHITE_CONCRETE).toString();
+	private final static Identifier BLACK_CONCRETE_ID = BLOCK.getId(BLACK_CONCRETE);
+	private final static Identifier WHITE_CONCRETE_ID = BLOCK.getId(WHITE_CONCRETE);
 
 	public QRCommand(final ICommandAsyncListener l, Map<ICommandAsyncNotifier, Boolean> commandRunningMap) {
 		super(l, commandRunningMap);
@@ -91,6 +93,21 @@ public class QRCommand extends AbstractCommandBase implements Command<FabricClie
 					final BitMatrix matrix = QRGenerator.createQRCodeBitMatrix(txt, getDimension());
 					final Direction facing = player.getHorizontalFacing();
 
+					final ClothConfig2Utils ccu = PandaCrossingMod.hasClothConfig2() ? (new ClothConfig2Utils()) : null;
+					final String black_material = ccu != null ? ccu.getBlackMaterial() : BLACK_CONCRETE_ID.toString();
+					final String white_material = ccu != null ? ccu.getWhiteMaterial() : WHITE_CONCRETE_ID.toString();
+
+					if (ccu != null) {
+
+						if (!ccu.getConfig().isValidMaterial(black_material)) {
+							throw new ConfigException("no such black material: " + black_material);
+						}
+
+						if (!ccu.getConfig().isValidMaterial(white_material)) {
+							throw new ConfigException("no such white material: " + white_material);
+						}
+					}
+
 					PCUndoCommand.generateUndoMatrix(player, facing, curPos, matrix);
 					QRGenerator.traverseQRCode(new IBlockTraverser() {
 
@@ -100,7 +117,7 @@ public class QRCommand extends AbstractCommandBase implements Command<FabricClie
 							final BlockPos nextPos = nextPos(facing, curPos, x, y);
 
 							player.sendChatMessage("/setblock " + nextPos.getX() + " " + nextPos.getY() + " "
-									+ nextPos.getZ() + " " + (b ? BLACK_CONCRETE_ID : WHITE_CONCRETE_ID) + " replace");
+									+ nextPos.getZ() + " " + (b ? black_material : white_material) + " replace");
 
 							if (delay > 0) {
 								TimeUnit.MILLISECONDS.sleep(delay);
@@ -110,11 +127,8 @@ public class QRCommand extends AbstractCommandBase implements Command<FabricClie
 					}, matrix);
 
 				} catch (Exception e) {
-					ctx.getSource().sendFeedback(new LiteralText(e.getMessage()).formatted(Formatting.DARK_RED)
-							.formatted(Formatting.BOLD).formatted(Formatting.ITALIC));
-				}
-
-				if (delay > 0) {
+					exceptionFeedback(ctx, e);
+				} finally {
 					notifyListenersFinished();
 				}
 

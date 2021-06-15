@@ -19,29 +19,16 @@
 
 package de.rangun.pandacrossing.config;
 
-import me.shedaniel.autoconfig.AutoConfig;
-import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
-import net.minecraft.client.gui.screen.Screen;
+public final class ConfigException extends Exception {
 
-public final class ClothConfig2Utils {
+	private static final long serialVersionUID = -6813207470538190163L;
 
-	public void register() {
-		AutoConfig.register(PandaCrossingConfig.class, GsonConfigSerializer::new);
+	public ConfigException(String string, Throwable e) {
+		super(string, e);
 	}
 
-	public Screen getConfigScreen(final Screen parent) {
-		return AutoConfig.getConfigScreen(PandaCrossingConfig.class, parent).get();
+	public ConfigException(String string) {
+		super(string);
 	}
 
-	public PandaCrossingConfig getConfig() {
-		return AutoConfig.getConfigHolder(PandaCrossingConfig.class).getConfig();
-	}
-
-	public String getBlackMaterial() {
-		return getConfig().material_black;
-	}
-
-	public String getWhiteMaterial() {
-		return getConfig().material_white;
-	}
 }

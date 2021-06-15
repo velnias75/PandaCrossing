@@ -21,11 +21,13 @@ package de.rangun.pandacrossing.commands;
 
 import java.util.Map;
 
-import com.google.zxing.WriterException;
+import com.mojang.brigadier.context.CommandContext;
 
 import de.rangun.pandacrossing.PandaCrossingMod;
 import de.rangun.pandacrossing.config.ClothConfig2Utils;
+import de.rangun.pandacrossing.config.ConfigException;
 import de.rangun.pandacrossing.qr.QRGenerator;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -78,11 +80,11 @@ abstract class AbstractCommandBase extends AbstractCommandAsyncNotifier {
 		return "PandaCrossing";
 	}
 
-	protected int getResultingDimension(final String text) {
+	protected int getResultingDimension(final String text) throws ConfigException {
 
 		try {
 			return QRGenerator.createQRCodeBitMatrix(text == null ? getPreset() : text, getDimension()).getWidth();
-		} catch (WriterException e) {
+		} catch (Exception e) {
 			return 30;
 		}
 	}
@@ -94,6 +96,11 @@ abstract class AbstractCommandBase extends AbstractCommandAsyncNotifier {
 		}
 
 		return -1;
+	}
+
+	protected void exceptionFeedback(final CommandContext<FabricClientCommandSource> context, Throwable e) {
+		context.getSource().sendFeedback(new LiteralText(e.getMessage()).formatted(Formatting.DARK_RED)
+				.formatted(Formatting.BOLD).formatted(Formatting.ITALIC));
 	}
 
 	protected Text runningFeedback() {
