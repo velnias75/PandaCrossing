@@ -25,6 +25,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import de.rangun.pandacrossing.config.ConfigException;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
@@ -58,10 +59,14 @@ public final class QRCalcCommand extends AbstractQRStatsCommandBase implements C
 
 		final Runnable task = () -> {
 
-			this.dim = getResultingDimension(getQRText(context));
-			this.ms = estimatedMilliseconds(this.dim);
-
-			notifyListenersFinished();
+			try {
+				this.dim = getResultingDimension(getQRText(context));
+				this.ms = estimatedMilliseconds(this.dim);
+			} catch (ConfigException e) {
+				exceptionFeedback(context, e);
+			} finally {
+				notifyListenersFinished();
+			}
 		};
 
 		new Thread(task).start();

@@ -21,12 +21,14 @@ package de.rangun.pandacrossing.config;
 
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 
 @Config(name = "panda_crossing")
 @Config.Gui.Background(Config.Gui.Background.TRANSPARENT)
+@SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
 public class PandaCrossingConfig implements ConfigData {
 
 	public enum ECL {
@@ -46,7 +48,17 @@ public class PandaCrossingConfig implements ConfigData {
 //	@ConfigEntry.BoundedDiscrete(min = 0, max = 256)
 //	public int margin = 1;
 	public String preset = "PandaCrossing";
+
+	// public String material_black = BLOCK.getId(BLACK_CONCRETE).toString();
+
 	@ConfigEntry.Gui.Tooltip(count = 4)
 	public ECL error_correction_level = ECL.Quartile;
+
 	public int command_delay = 0;
+
+	@Override
+	public void validatePostLoad() throws ValidationException {
+		if (preset.isEmpty() || "".equals(preset))
+			throw new ValidationException("preset cannot be empty");
+	}
 }

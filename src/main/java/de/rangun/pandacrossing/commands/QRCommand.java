@@ -36,10 +36,8 @@ import de.rangun.pandacrossing.qr.QRGenerator;
 import de.rangun.pandacrossing.qr.QRGenerator.IBlockTraverser;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -112,11 +110,8 @@ public class QRCommand extends AbstractCommandBase implements Command<FabricClie
 					}, matrix);
 
 				} catch (Exception e) {
-					ctx.getSource().sendFeedback(new LiteralText(e.getMessage()).formatted(Formatting.DARK_RED)
-							.formatted(Formatting.BOLD).formatted(Formatting.ITALIC));
-				}
-
-				if (delay > 0) {
+					exceptionFeedback(ctx, e);
+				} finally {
 					notifyListenersFinished();
 				}
 
