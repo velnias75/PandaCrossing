@@ -24,7 +24,9 @@ import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.DIS
 import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.literal;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.lwjgl.glfw.GLFW;
@@ -44,19 +46,27 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.VersionParsingException;
 import net.fabricmc.loader.util.version.SemanticVersionImpl;
 import net.fabricmc.loader.util.version.SemanticVersionPredicateParser;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.network.MessageType;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Util;
 
 public final class PandaCrossingMod implements ClientModInitializer, ICommandAsyncListener {
 
 	private static KeyBinding keyBinding;
 
-	private Map<ICommandAsyncNotifier, Boolean> commandRunningMap = new HashMap<>();
+	private Map<ICommandAsyncNotifier, Boolean> commandRunningMap = new LinkedHashMap<>(10);
+	private List<ICleanUpListener> cleanUpListeners = new ArrayList<>();
 
 	public static boolean hasClothConfig2() {
 
@@ -90,10 +100,40 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 					InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_U, "category.panda_crossing.keys"));
 		}
 
-		final LiteralCommandNode<FabricClientCommandSource> undo = DISPATCHER.register(literal("pcundo")
-				.requires(source -> hasPermission(source)).executes(new PCUndoCommand(this, commandRunningMap)));
+		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
 
-		DISPATCHER.register(literal("qr").requires(source -> hasPermission(source))
+			final MutableText welcomeMsg = new LiteralText("Welcome to PandaCrossing, ").formatted(Formatting.AQUA)
+					.append(new LiteralText(client.player.getDisplayName().asString()).formatted(Formatting.RED));
+
+//			if (!hasPermission(client.player)) {
+//				welcomeMsg.append("\n").append(
+//						new LiteralText("You don't seem to have the permission to use PandaCrossing on this server :-(")
+//								.formatted(Formatting.DARK_RED));
+//			}
+
+			if (hasClothConfig2()) {
+				welcomeMsg.append("\n").append(new LiteralText("Press \'"))
+						.append(keyBinding.getBoundKeyLocalizedText())
+						.append(new LiteralText("\' to access the settings menu."));
+			}
+
+			client.inGameHud.addChatMessage(MessageType.SYSTEM, welcomeMsg, Util.NIL_UUID);
+		});
+
+		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+
+			for (ICleanUpListener l : cleanUpListeners) {
+				l.cleanUp();
+			}
+
+			commandRunningMap.clear();
+		});
+
+		final LiteralCommandNode<FabricClientCommandSource> undo = DISPATCHER
+				.register(literal("pcundo").requires(source -> hasPermission(source.getClient().player))
+						.executes(new PCUndoCommand(this, commandRunningMap)));
+
+		DISPATCHER.register(literal("qr").requires(source -> hasPermission(source.getClient().player))
 				.then(argument("text", greedyString()).executes(new QRCommand(this, commandRunningMap)))
 				.executes(new QRCommandUsage()));
 
@@ -104,7 +144,7 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 		DISPATCHER.register(literal("qrundo").redirect(undo));
 
 		if (ccu != null) {
-			DISPATCHER.register(literal("qrpreset").requires(source -> hasPermission(source))
+			DISPATCHER.register(literal("qrpreset").requires(source -> hasPermission(source.getClient().player))
 					.executes(new QRPresetCommand(this, commandRunningMap)));
 		}
 
@@ -120,8 +160,8 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 		}
 	}
 
-	private static boolean hasPermission(final FabricClientCommandSource src) {
-		return src.hasPermissionLevel(2) || src.getPlayer().isCreative();
+	private static boolean hasPermission(final ClientPlayerEntity player) {
+		return player.hasPermissionLevel(2) || player.isCreative();
 	}
 
 	@Override
@@ -138,5 +178,9 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 		ctx.getSource().sendFeedback(src.feedbackText(ctx));
 
 		commandRunningMap.remove(src);
+	}
+
+	public void registerCleanUpListener(ICleanUpListener l) {
+		cleanUpListeners.add(l);
 	}
 }

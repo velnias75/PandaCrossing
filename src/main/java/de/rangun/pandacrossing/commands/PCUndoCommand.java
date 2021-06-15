@@ -22,6 +22,7 @@ package de.rangun.pandacrossing.commands;
 import static net.minecraft.util.registry.Registry.BLOCK;
 
 import java.util.Map;
+import java.util.Stack;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
@@ -30,6 +31,8 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import de.rangun.pandacrossing.ICleanUpListener;
+import de.rangun.pandacrossing.PandaCrossingMod;
 import de.rangun.pandacrossing.qr.QRGenerator;
 import de.rangun.pandacrossing.qr.QRGenerator.IBlockTraverser;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
@@ -44,9 +47,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-public final class PCUndoCommand extends AbstractCommandBase implements Command<FabricClientCommandSource> {
+public final class PCUndoCommand extends AbstractCommandBase
+		implements Command<FabricClientCommandSource>, ICleanUpListener {
 
-	private volatile static Vector<Vector<UndoBlock>> undoMatrix = null;
+	private volatile static Stack<Vector<Vector<UndoBlock>>> undoMatrixStack = new Stack<>();
 	private boolean undoSuccess = false;
 
 	private static class UndoBlock {
@@ -60,14 +64,15 @@ public final class PCUndoCommand extends AbstractCommandBase implements Command<
 		}
 	}
 
-	public PCUndoCommand(ICommandAsyncListener l, Map<ICommandAsyncNotifier, Boolean> commandRunningMap) {
-		super(l, commandRunningMap);
+	public PCUndoCommand(PandaCrossingMod mod, Map<ICommandAsyncNotifier, Boolean> commandRunningMap) {
+		super(mod, commandRunningMap);
+		mod.registerCleanUpListener(this);
 	}
 
-	public static void generateUndoMatrix(final ClientPlayerEntity player, final Direction facing,
-			final BlockPos curPos, final BitMatrix matrix) throws InterruptedException {
+	public static void pushUndoMatrix(final ClientPlayerEntity player, final Direction facing, final BlockPos curPos,
+			final BitMatrix matrix) throws InterruptedException {
 
-		undoMatrix = new Vector<Vector<UndoBlock>>(matrix.getHeight());
+		undoMatrixStack.push(new Vector<Vector<UndoBlock>>(matrix.getHeight()));
 
 		QRGenerator.traverseQRCode(new IBlockTraverser() {
 
@@ -79,22 +84,22 @@ public final class PCUndoCommand extends AbstractCommandBase implements Command<
 				final BlockPos nextPos = nextPos(facing, curPos, x, y);
 
 				Vector<UndoBlock> row = new Vector<UndoBlock>(matrix.getWidth());
-				undoMatrix.add(row);
+				undoMatrixStack.peek().add(row);
 
-				row = undoMatrix.get(y);
+				row = undoMatrixStack.peek().get(y);
 				row.add(new UndoBlock(nextPos, world.getBlockState(nextPos)));
 			}
 
 		}, matrix);
 	}
 
-	private boolean applyUndoMatrix(final ClientPlayerEntity player) throws InterruptedException {
+	private boolean popUndoMatrix(final ClientPlayerEntity player) throws InterruptedException {
 
-		if (undoMatrix != null) {
+		if (!undoMatrixStack.isEmpty()) {
 
 			final int delay = getDelay();
 
-			for (final Vector<UndoBlock> v1 : undoMatrix) {
+			for (final Vector<UndoBlock> v1 : undoMatrixStack.pop()) {
 
 				for (final UndoBlock v2 : v1) {
 
@@ -106,8 +111,6 @@ public final class PCUndoCommand extends AbstractCommandBase implements Command<
 					}
 				}
 			}
-
-			undoMatrix = null;
 
 			return true;
 		}
@@ -152,7 +155,7 @@ public final class PCUndoCommand extends AbstractCommandBase implements Command<
 				notifyListenersRunning();
 
 				try {
-					undoSuccess = applyUndoMatrix(ctx.getSource().getPlayer());
+					undoSuccess = popUndoMatrix(ctx.getSource().getPlayer());
 				} catch (Exception e) {
 					ctx.getSource().sendFeedback(new LiteralText(e.getMessage()).formatted(Formatting.DARK_RED)
 							.formatted(Formatting.BOLD).formatted(Formatting.ITALIC));
@@ -168,6 +171,11 @@ public final class PCUndoCommand extends AbstractCommandBase implements Command<
 		new Thread(task).start();
 
 		return Command.SINGLE_SUCCESS;
+	}
+
+	@Override
+	public void cleanUp() {
+		undoMatrixStack.clear();
 	}
 
 }

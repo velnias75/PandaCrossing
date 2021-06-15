@@ -17,29 +17,8 @@
  * along with PandaCrossing.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.rangun.pandacrossing.commands;
+package de.rangun.pandacrossing;
 
-import java.util.Map;
-
-import com.mojang.brigadier.context.CommandContext;
-
-import de.rangun.pandacrossing.PandaCrossingMod;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
-
-public final class QRPresetCommand extends QRCommand {
-
-	public QRPresetCommand(PandaCrossingMod mod, Map<ICommandAsyncNotifier, Boolean> commandRunningMap) {
-		super(mod, commandRunningMap);
-	}
-
-	@Override
-	public String commandName() {
-		return "QRPresetCommand";
-	}
-
-	@Override
-	protected String getText(CommandContext<FabricClientCommandSource> ctx) {
-		return getPreset();
-	}
-
+public interface ICleanUpListener {
+	void cleanUp();
 }

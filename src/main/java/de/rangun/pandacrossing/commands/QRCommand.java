@@ -51,8 +51,8 @@ public class QRCommand extends AbstractCommandBase implements Command<FabricClie
 	private final static Identifier BLACK_CONCRETE_ID = BLOCK.getId(BLACK_CONCRETE);
 	private final static Identifier WHITE_CONCRETE_ID = BLOCK.getId(WHITE_CONCRETE);
 
-	public QRCommand(final ICommandAsyncListener l, Map<ICommandAsyncNotifier, Boolean> commandRunningMap) {
-		super(l, commandRunningMap);
+	public QRCommand(final PandaCrossingMod mod, Map<ICommandAsyncNotifier, Boolean> commandRunningMap) {
+		super(mod, commandRunningMap);
 	}
 
 	@Override
@@ -108,7 +108,7 @@ public class QRCommand extends AbstractCommandBase implements Command<FabricClie
 						}
 					}
 
-					PCUndoCommand.generateUndoMatrix(player, facing, curPos, matrix);
+					PCUndoCommand.pushUndoMatrix(player, facing, curPos, matrix);
 					QRGenerator.traverseQRCode(new IBlockTraverser() {
 
 						@Override
