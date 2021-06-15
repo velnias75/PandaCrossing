@@ -31,6 +31,8 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import de.rangun.pandacrossing.ICleanUpListener;
+import de.rangun.pandacrossing.PandaCrossingMod;
 import de.rangun.pandacrossing.qr.QRGenerator;
 import de.rangun.pandacrossing.qr.QRGenerator.IBlockTraverser;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
@@ -45,7 +47,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-public final class PCUndoCommand extends AbstractCommandBase implements Command<FabricClientCommandSource> {
+public final class PCUndoCommand extends AbstractCommandBase
+		implements Command<FabricClientCommandSource>, ICleanUpListener {
 
 	private volatile static Stack<Vector<Vector<UndoBlock>>> undoMatrixStack = new Stack<>();
 	private boolean undoSuccess = false;
@@ -61,8 +64,9 @@ public final class PCUndoCommand extends AbstractCommandBase implements Command<
 		}
 	}
 
-	public PCUndoCommand(ICommandAsyncListener l, Map<ICommandAsyncNotifier, Boolean> commandRunningMap) {
-		super(l, commandRunningMap);
+	public PCUndoCommand(PandaCrossingMod mod, Map<ICommandAsyncNotifier, Boolean> commandRunningMap) {
+		super(mod, commandRunningMap);
+		mod.registerCleanUpListener(this);
 	}
 
 	public static void pushUndoMatrix(final ClientPlayerEntity player, final Direction facing, final BlockPos curPos,
@@ -107,8 +111,6 @@ public final class PCUndoCommand extends AbstractCommandBase implements Command<
 					}
 				}
 			}
-
-			// undoMatrixStack = null;
 
 			return true;
 		}
@@ -169,6 +171,11 @@ public final class PCUndoCommand extends AbstractCommandBase implements Command<
 		new Thread(task).start();
 
 		return Command.SINGLE_SUCCESS;
+	}
+
+	@Override
+	public void cleanUp() {
+		undoMatrixStack.clear();
 	}
 
 }

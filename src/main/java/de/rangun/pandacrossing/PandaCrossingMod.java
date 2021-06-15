@@ -24,7 +24,9 @@ import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.DIS
 import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.literal;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.lwjgl.glfw.GLFW;
@@ -64,6 +66,7 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 	private static KeyBinding keyBinding;
 
 	private Map<ICommandAsyncNotifier, Boolean> commandRunningMap = new LinkedHashMap<>(10);
+	private List<ICleanUpListener> cleanUpListeners = new ArrayList<>();
 
 	public static boolean hasClothConfig2() {
 
@@ -118,7 +121,12 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 		});
 
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-			commandRunningMap = null;
+
+			for (ICleanUpListener l : cleanUpListeners) {
+				l.cleanUp();
+			}
+
+			commandRunningMap.clear();
 		});
 
 		final LiteralCommandNode<FabricClientCommandSource> undo = DISPATCHER
@@ -170,5 +178,9 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 		ctx.getSource().sendFeedback(src.feedbackText(ctx));
 
 		commandRunningMap.remove(src);
+	}
+
+	public void registerCleanUpListener(ICleanUpListener l) {
+		cleanUpListeners.add(l);
 	}
 }

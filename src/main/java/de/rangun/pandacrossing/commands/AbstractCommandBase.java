@@ -48,9 +48,9 @@ abstract class AbstractCommandBase extends AbstractCommandAsyncNotifier {
 		runningMap = null;
 	}
 
-	protected AbstractCommandBase(ICommandAsyncListener l, final Map<ICommandAsyncNotifier, Boolean> m) {
-		super(l);
-		runningMap = m;
+	protected AbstractCommandBase(PandaCrossingMod mod, final Map<ICommandAsyncNotifier, Boolean> map) {
+		super(mod);
+		runningMap = map;
 	}
 
 	protected int getDelay() {
