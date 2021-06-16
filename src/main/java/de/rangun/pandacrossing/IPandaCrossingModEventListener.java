@@ -19,6 +19,10 @@
 
 package de.rangun.pandacrossing;
 
-public interface ICleanUpListener {
+public interface IPandaCrossingModEventListener {
 	void cleanUp();
+
+	void worldTickStarted();
+
+	void worldTickEnded();
 }

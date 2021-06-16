@@ -8,6 +8,7 @@
 	"text.autoconfig.panda_crossing.option.material_black": "Material to use for black parts",
 	"text.autoconfig.panda_crossing.option.material_white": "Material to use for white parts",
 	"text.autoconfig.panda_crossing.option.command_delay": "Command delay (in milliseconds)",
+	"text.autoconfig.panda_crossing.option.animation_mode": "Animation mode",
 	"text.autoconfig.panda_crossing.option.error_correction_level": "Error correction level",
 	"text.autoconfig.panda_crossing.option.error_correction_level.@Tooltip[0]": "Low: ~7% correction",
 	"text.autoconfig.panda_crossing.option.error_correction_level.@Tooltip[1]": "Medium: ~15% correction",

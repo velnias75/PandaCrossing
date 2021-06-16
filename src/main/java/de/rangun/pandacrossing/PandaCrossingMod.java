@@ -67,7 +67,7 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 	private static KeyBinding keyBinding;
 
 	private Map<ICommandAsyncNotifier, Boolean> commandRunningMap = new LinkedHashMap<>(10);
-	private List<ICleanUpListener> cleanUpListeners = new ArrayList<>();
+	private List<IPandaCrossingModEventListener> cleanUpListeners = new ArrayList<>();
 
 	public static boolean hasClothConfig2() {
 
@@ -104,7 +104,8 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
 
 			final MutableText welcomeMsg = new LiteralText("Welcome to PandaCrossing, ").formatted(Formatting.AQUA)
-					.append(new LiteralText(client.player.getDisplayName().asString()).formatted(Formatting.RED));
+					.append(new LiteralText(client.player.getDisplayName().asString()).formatted(Formatting.RED)
+							.append(new LiteralText(" :-)").formatted(Formatting.AQUA)));
 
 //			if (!hasPermission(client.player)) {
 //				welcomeMsg.append("\n").append(
@@ -123,11 +124,23 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
 
-			for (ICleanUpListener l : cleanUpListeners) {
+			for (IPandaCrossingModEventListener l : cleanUpListeners) {
 				l.cleanUp();
 			}
 
 			commandRunningMap.clear();
+		});
+
+		ClientTickEvents.START_WORLD_TICK.register((client) -> {
+			for (IPandaCrossingModEventListener l : cleanUpListeners) {
+				l.worldTickStarted();
+			}
+		});
+
+		ClientTickEvents.END_WORLD_TICK.register((client) -> {
+			for (IPandaCrossingModEventListener l : cleanUpListeners) {
+				l.worldTickEnded();
+			}
 		});
 
 		final LiteralCommandNode<FabricClientCommandSource> undo = DISPATCHER
@@ -196,7 +209,7 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 		commandRunningMap.remove(src);
 	}
 
-	public void registerCleanUpListener(ICleanUpListener l) {
+	public void registerCleanUpListener(IPandaCrossingModEventListener l) {
 		cleanUpListeners.add(l);
 	}
 }
