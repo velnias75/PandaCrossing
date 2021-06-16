@@ -26,6 +26,9 @@ import static net.minecraft.util.registry.Registry.BLOCK;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.google.zxing.common.BitMatrix;
 import com.mojang.brigadier.Command;
@@ -55,9 +58,10 @@ public class QRCommand extends AbstractCommandBase
 	private final static Identifier BLACK_CONCRETE_ID = BLOCK.getId(BLACK_CONCRETE);
 	private final static Identifier WHITE_CONCRETE_ID = BLOCK.getId(WHITE_CONCRETE);
 
-	private final QRDirection dir;
+	private final Lock lock = new ReentrantLock();
+	private final Condition notTicking = lock.newCondition();
 
-	private volatile boolean ticking = true;
+	private final QRDirection dir;
 
 	public QRCommand(final PandaCrossingMod mod, Map<ICommandAsyncNotifier, Boolean> commandRunningMap,
 			final QRDirection dir) {
@@ -131,8 +135,6 @@ public class QRCommand extends AbstractCommandBase
 
 		final Runnable task = () -> {
 
-			ticking = true;
-
 			if (runningMap.isEmpty()) {
 
 				notifyListenersRunning();
@@ -180,8 +182,18 @@ public class QRCommand extends AbstractCommandBase
 							}
 
 							if (animationMode) {
-								while (ticking)
-									;
+								lock.lock();
+
+								boolean ticking = true;
+
+								try {
+									while (ticking) {
+										notTicking.await();
+										ticking = false;
+									}
+								} finally {
+									lock.unlock();
+								}
 							}
 						}
 
@@ -208,13 +220,15 @@ public class QRCommand extends AbstractCommandBase
 	}
 
 	@Override
-	public void worldTickStarted() {
-		ticking = true;
-	}
+	public void worldTickEnded() throws InterruptedException {
 
-	@Override
-	public void worldTickEnded() {
-		ticking = false;
+		lock.lock();
+
+		try {
+			notTicking.signal();
+		} finally {
+			lock.unlock();
+		}
 	}
 
 }

@@ -179,10 +179,6 @@ public final class PCUndoCommand extends AbstractCommandBase
 	}
 
 	@Override
-	public void worldTickStarted() {
-	}
-
-	@Override
 	public void worldTickEnded() {
 	}
 }

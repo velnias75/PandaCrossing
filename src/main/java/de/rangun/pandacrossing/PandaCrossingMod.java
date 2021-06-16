@@ -131,15 +131,12 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 			commandRunningMap.clear();
 		});
 
-		ClientTickEvents.START_WORLD_TICK.register((client) -> {
-			for (IPandaCrossingModEventListener l : cleanUpListeners) {
-				l.worldTickStarted();
-			}
-		});
-
 		ClientTickEvents.END_WORLD_TICK.register((client) -> {
 			for (IPandaCrossingModEventListener l : cleanUpListeners) {
-				l.worldTickEnded();
+				try {
+					l.worldTickEnded();
+				} catch (InterruptedException e) {
+				}
 			}
 		});
 

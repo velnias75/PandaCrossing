@@ -22,7 +22,5 @@ package de.rangun.pandacrossing;
 public interface IPandaCrossingModEventListener {
 	void cleanUp();
 
-	void worldTickStarted();
-
-	void worldTickEnded();
+	void worldTickEnded() throws InterruptedException;
 }
