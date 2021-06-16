@@ -19,6 +19,8 @@
 
 package de.rangun.pandacrossing;
 
-public interface ICleanUpListener {
+public interface IPandaCrossingModEventListener {
 	void cleanUp();
+
+	void worldTickEnded() throws InterruptedException;
 }

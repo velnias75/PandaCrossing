@@ -62,6 +62,8 @@ public class PandaCrossingConfig implements ConfigData {
 
 	public int command_delay = 0;
 
+	public boolean animation_mode = false;
+
 	@Override
 	public void validatePostLoad() throws ValidationException {
 

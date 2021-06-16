@@ -31,7 +31,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import de.rangun.pandacrossing.ICleanUpListener;
+import de.rangun.pandacrossing.IPandaCrossingModEventListener;
 import de.rangun.pandacrossing.PandaCrossingMod;
 import de.rangun.pandacrossing.qr.QRGenerator;
 import de.rangun.pandacrossing.qr.QRGenerator.IBlockTraverser;
@@ -48,7 +48,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 public final class PCUndoCommand extends AbstractCommandBase
-		implements Command<FabricClientCommandSource>, ICleanUpListener {
+		implements Command<FabricClientCommandSource>, IPandaCrossingModEventListener {
 
 	private volatile static Stack<Vector<Vector<UndoBlock>>> undoMatrixStack = new Stack<>();
 	private boolean undoSuccess = false;
@@ -178,4 +178,7 @@ public final class PCUndoCommand extends AbstractCommandBase
 		undoMatrixStack.clear();
 	}
 
+	@Override
+	public void worldTickEnded() {
+	}
 }

@@ -26,12 +26,16 @@ import static net.minecraft.util.registry.Registry.BLOCK;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.google.zxing.common.BitMatrix;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import de.rangun.pandacrossing.IPandaCrossingModEventListener;
 import de.rangun.pandacrossing.PandaCrossingMod;
 import de.rangun.pandacrossing.config.ClothConfig2Utils;
 import de.rangun.pandacrossing.config.ConfigException;
@@ -48,10 +52,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
-public class QRCommand extends AbstractCommandBase implements Command<FabricClientCommandSource> {
+public class QRCommand extends AbstractCommandBase
+		implements Command<FabricClientCommandSource>, IPandaCrossingModEventListener {
 
 	private final static Identifier BLACK_CONCRETE_ID = BLOCK.getId(BLACK_CONCRETE);
 	private final static Identifier WHITE_CONCRETE_ID = BLOCK.getId(WHITE_CONCRETE);
+
+	private final Lock lock = new ReentrantLock();
+	private final Condition notTicking = lock.newCondition();
 
 	private final QRDirection dir;
 
@@ -59,6 +67,8 @@ public class QRCommand extends AbstractCommandBase implements Command<FabricClie
 			final QRDirection dir) {
 		super(mod, commandRunningMap);
 		this.dir = dir;
+
+		mod.registerCleanUpListener(this);
 	}
 
 	@Override
@@ -112,11 +122,14 @@ public class QRCommand extends AbstractCommandBase implements Command<FabricClie
 	public int run(final CommandContext<FabricClientCommandSource> ctx) throws CommandSyntaxException {
 
 		final String txt = getText(ctx);
-
 		final int delay = getDelay();
 
 		final ClientPlayerEntity player = ctx.getSource().getPlayer();
 		final BlockPos curPos = curPos(dir, player);
+
+		final boolean animationMode = PandaCrossingMod.hasClothConfig2()
+				? (new ClothConfig2Utils()).getConfig().animation_mode
+				: false;
 
 		setCommandContext(ctx);
 
@@ -154,6 +167,10 @@ public class QRCommand extends AbstractCommandBase implements Command<FabricClie
 
 							final BlockPos nextPos = nextPos(dir, facing, curPos, x, y);
 
+							if (animationMode) {
+								player.setPos(nextPos.getX(), nextPos.getY() + 1, nextPos.getZ());
+							}
+
 							player.sendChatMessage((new StringBuilder("/setblock ")).append(nextPos.getX()).append(' ')
 									.append(nextPos.getY()).append(' ').append(nextPos.getZ()).append(' ')
 									.append((b ? black_material : white_material))
@@ -162,6 +179,21 @@ public class QRCommand extends AbstractCommandBase implements Command<FabricClie
 
 							if (delay > 0) {
 								TimeUnit.MILLISECONDS.sleep(delay);
+							}
+
+							if (animationMode) {
+								lock.lock();
+
+								boolean ticking = true;
+
+								try {
+									while (ticking) {
+										notTicking.await();
+										ticking = false;
+									}
+								} finally {
+									lock.unlock();
+								}
 							}
 						}
 
@@ -182,4 +214,21 @@ public class QRCommand extends AbstractCommandBase implements Command<FabricClie
 
 		return Command.SINGLE_SUCCESS;
 	}
+
+	@Override
+	public void cleanUp() {
+	}
+
+	@Override
+	public void worldTickEnded() throws InterruptedException {
+
+		lock.lock();
+
+		try {
+			notTicking.signal();
+		} finally {
+			lock.unlock();
+		}
+	}
+
 }
