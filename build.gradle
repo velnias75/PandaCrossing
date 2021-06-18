@@ -52,7 +52,8 @@ dependencies {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 	
-	modImplementation "com.google.code.findbugs:annotations:${project.findbugs_version}"
+	modCompileOnly "com.google.code.findbugs:annotations:${project.findbugs_version}"
+	annotationProcessor "com.google.code.findbugs:annotations:${project.findbugs_version}"
 }
 
 minecraft {
