@@ -54,7 +54,7 @@ import net.fabricmc.loader.api.VersionParsingException;
 import net.fabricmc.loader.util.version.SemanticVersionImpl;
 import net.fabricmc.loader.util.version.SemanticVersionPredicateParser;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.network.MessageType;
 import net.minecraft.text.LiteralText;
