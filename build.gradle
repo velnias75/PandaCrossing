@@ -22,9 +22,13 @@ repositories {
 		url = 'https://nexus.velocitypowered.com/repository/maven-public/'
 	}
 	maven {
-		name = 'modmenu'
-		url = 'https://maven.terraformersmc.com/releases/'
+		name = 'TerraformersMC Archive'
+		url = 'https://raw.githubusercontent.com/TerraformersMC/Archive/main/releases/'
 	}
+	//maven {
+	//	name = 'modmenu'
+	//	url = 'https://maven.terraformersmc.com/releases/'
+	//}
 	maven { url "https://maven.shedaniel.me/" }
 }
 

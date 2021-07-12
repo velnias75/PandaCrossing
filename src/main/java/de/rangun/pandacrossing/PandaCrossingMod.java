@@ -180,7 +180,7 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 
 			ClientTickEvents.END_CLIENT_TICK.register(client -> {
 				while (keyBinding.wasPressed()) {
-					client.openScreen(ccu2.getConfigScreen(null));
+					client.setScreen(ccu2.getConfigScreen(null));
 				}
 			});
 		}
