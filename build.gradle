@@ -1,7 +1,7 @@
 import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
-	id 'fabric-loom' version '0.8-SNAPSHOT'
+	id 'fabric-loom' version '0.9+'
 	id 'com.github.johnrengelman.shadow' version '7.0.0'
 	id 'com.matthewprenger.cursegradle' version "1.4.0"
 	id 'maven-publish'
@@ -21,19 +21,19 @@ repositories {
 		name = 'velocity'
 		url = 'https://nexus.velocitypowered.com/repository/maven-public/'
 	}
-	maven {
-		name = 'TerraformersMC Archive'
-		url = 'https://raw.githubusercontent.com/TerraformersMC/Archive/main/releases/'
-	}
 	//maven {
-	//	name = 'modmenu'
-	//	url = 'https://maven.terraformersmc.com/releases/'
+	//	name = 'TerraformersMC Archive'
+	//	url = 'https://raw.githubusercontent.com/TerraformersMC/Archive/main/releases/'
 	//}
+	maven {
+		name = 'modmenu'
+		url = 'https://maven.terraformersmc.com/releases/'
+	}
 	maven { url "https://maven.shedaniel.me/" }
 }
 
 loom {
-    customManifest = "https://gist.githubusercontent.com/modmuss50/6e00baf80dcbaa42f3a2fc846b290128/raw/f035ef8f75164f56ec6352809a34841d326bae1c/1_18_experimental-snapshot-1.json"
+    customMinecraftManifest = "https://gist.githubusercontent.com/velnias75/cd4e7813ed9f846a44ed9d5bda33eb1d/raw/8f6eb27f82f71cbd25b93caa5648820ae6d58afc/1_18_experimental-snapshot-2.json"
 }
 
 dependencies {
@@ -64,8 +64,8 @@ dependencies {
 	annotationProcessor "com.google.code.findbugs:annotations:${project.findbugs_version}"
 }
 
-minecraft {
-	refmapName = "${project.group}.${project.archivesBaseName}"
+loom {
+	mixin.defaultRefmapName = "${project.group}.${project.archivesBaseName}"
 }
 
 compileJava {
