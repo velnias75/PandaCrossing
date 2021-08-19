@@ -33,7 +33,7 @@ repositories {
 }
 
 loom {
-    customMinecraftManifest = "https://gist.githubusercontent.com/velnias75/b929ab4efcbc8f665a6640458d879f59/raw/a8133aa9b96f354f5b235cf49d5b479eba893438/1_18_experimental-snapshot-3.json"
+    customMinecraftManifest = "https://gist.githubusercontent.com/velnias75/423ca0dd79ffbc03e557166cb25370bb/raw/ee24ff4abfc0955bf4d3369372885dfbe8e049d1/1_18_experimental-snapshot-4.json"
 }
 
 dependencies {
