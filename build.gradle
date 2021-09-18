@@ -32,10 +32,6 @@ repositories {
 	maven { url "https://maven.shedaniel.me/" }
 }
 
-loom {
-    customMinecraftManifest = "https://gist.githubusercontent.com/velnias75/3ea8839862a2f71f2cf5bd73451b1baa/raw/22f4ab09166b341e9268bd444fd5cb699cfcca28/1_18_experimental-snapshot-7.json"
-}
-
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
