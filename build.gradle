@@ -1,7 +1,7 @@
 import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
-	id 'fabric-loom' version '0.9+'
+	id 'fabric-loom' version '0.10-SNAPSHOT'
 	id 'com.github.johnrengelman.shadow' version '7.0.0'
 	id 'com.matthewprenger.cursegradle' version "1.4.0"
 	id 'maven-publish'
@@ -189,7 +189,7 @@ tasks.jar.enabled = false
 tasks.remapJar.enabled = false
 
 shadowJar {
- 	destinationDirectory = file("${buildDir}/tmp/allJar")
+    destinationDirectory = file("${buildDir}/tmp/allJar")
     configurations = [project.configurations.shadow]
     relocate 'com.google.zxing', 'de.rangun.pandacrossing.shadowed.com.google.zxing'
 
