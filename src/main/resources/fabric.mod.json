@@ -29,20 +29,20 @@
   ],
 
   "depends": {
-    "fabricloader": ">=0.12.2",
+    "fabricloader": ">=0.13.3",
     "fabric": "*",
-    "minecraft": ">=1.18"
+    "minecraft": ">=1.18.2"
   },
   "recommends": {
-    "cloth-config2": ">=6.0.39"
+    "cloth-config2": ">=6.2.62"
   },
   "suggests": {
-    "modmenu": ">=3.0.0"
+    "modmenu": ">=3.2.1"
   },
   "custom": {
     "modmenu": {
         "links": {
-            "modmenu.discord": "https://discord.me/agoramc"
+            "modmenu.discord": "https://discord.gg/kQP9QSG6F4"
         }
     }
 }
