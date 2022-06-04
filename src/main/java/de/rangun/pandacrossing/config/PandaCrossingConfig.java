@@ -23,6 +23,8 @@ import static net.minecraft.block.Blocks.BLACK_CONCRETE;
 import static net.minecraft.block.Blocks.WHITE_CONCRETE;
 import static net.minecraft.util.registry.Registry.BLOCK;
 
+import java.util.Set;
+
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -34,7 +36,7 @@ import net.minecraft.util.Identifier;
 @Config(name = "panda_crossing")
 @Config.Gui.Background(Config.Gui.Background.TRANSPARENT)
 @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
-public class PandaCrossingConfig implements ConfigData {
+public final class PandaCrossingConfig implements ConfigData {
 
 	public enum ECL {
 
@@ -48,7 +50,7 @@ public class PandaCrossingConfig implements ConfigData {
 		}
 	};
 
-	@ConfigEntry.BoundedDiscrete(min = 27, max = 256)
+	@ConfigEntry.BoundedDiscrete(min = 1, max = 256)
 	public int dimension = 27;
 
 	@ConfigEntry.BoundedDiscrete(min = 1, max = 256)
@@ -84,5 +86,9 @@ public class PandaCrossingConfig implements ConfigData {
 	public boolean isValidMaterial(String material) {
 		final Identifier id = Identifier.tryParse(material);
 		return (id != null && BLOCK.containsId(id));
+	}
+
+	private Set<Integer> dims() {
+		return null;
 	}
 }
