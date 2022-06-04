@@ -70,6 +70,8 @@ public final class PandaCrossingConfig implements ConfigData {
 
 	public boolean animation_mode = false;
 
+	public boolean show_welcome_message = true;
+
 	@Override
 	public void validatePostLoad() throws ValidationException {
 

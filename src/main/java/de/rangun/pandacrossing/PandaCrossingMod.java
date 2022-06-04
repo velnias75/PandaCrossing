@@ -103,9 +103,17 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
 
-			final MutableText welcomeMsg = new LiteralText("Welcome to PandaCrossing, ").formatted(Formatting.AQUA)
-					.append(new LiteralText(client.player.getDisplayName().asString()).formatted(Formatting.RED)
-							.append(new LiteralText(" :-)").formatted(Formatting.AQUA)));
+			boolean showMsg = true;
+
+			if (hasClothConfig2()) {
+				showMsg = (new ClothConfig2Utils().getConfig()).show_welcome_message;
+			}
+
+			if (showMsg) {
+
+				final MutableText welcomeMsg = new LiteralText("Welcome to PandaCrossing, ").formatted(Formatting.AQUA)
+						.append(new LiteralText(client.player.getDisplayName().asString()).formatted(Formatting.RED)
+								.append(new LiteralText(" :-)").formatted(Formatting.AQUA)));
 
 //			if (!hasPermission(client.player)) {
 //				welcomeMsg.append("\n").append(
@@ -113,13 +121,14 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 //								.formatted(Formatting.DARK_RED));
 //			}
 
-			if (hasClothConfig2()) {
-				welcomeMsg.append("\n").append(new LiteralText("Press \'"))
-						.append(keyBinding.getBoundKeyLocalizedText())
-						.append(new LiteralText("\' to access the settings menu."));
-			}
+				if (hasClothConfig2()) {
+					welcomeMsg.append("\n").append(new LiteralText("Press \'"))
+							.append(keyBinding.getBoundKeyLocalizedText())
+							.append(new LiteralText("\' to access the settings menu."));
+				}
 
-			client.inGameHud.addChatMessage(MessageType.SYSTEM, welcomeMsg, Util.NIL_UUID);
+				client.inGameHud.addChatMessage(MessageType.SYSTEM, welcomeMsg, Util.NIL_UUID);
+			}
 		});
 
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {

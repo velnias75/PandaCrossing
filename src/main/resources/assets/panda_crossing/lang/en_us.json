@@ -15,6 +15,7 @@
 	"text.autoconfig.panda_crossing.option.error_correction_level.@Tooltip[1]": "Medium: ~15% correction",
 	"text.autoconfig.panda_crossing.option.error_correction_level.@Tooltip[2]": "Quartile: ~25% correction",
 	"text.autoconfig.panda_crossing.option.error_correction_level.@Tooltip[3]": "High: ~30% correction",
+	"text.autoconfig.panda_crossing.option.show_welcome_message": "Show welcome message",
 	"text.panda_crossing.undo.success": "undo successful",
 	"text.panda_crossing.undo.nothing": "nothing to undo",
 	"text.panda_crossing.qrcommand.finished": "QR-Code processing finished."
