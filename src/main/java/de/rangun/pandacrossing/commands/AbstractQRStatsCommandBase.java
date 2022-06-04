@@ -43,7 +43,7 @@ abstract class AbstractQRStatsCommandBase extends AbstractCommandBase {
 								- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(ms)),
 						TimeUnit.MILLISECONDS.toSeconds(ms)
 								- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(ms))))
-										.formatted(Formatting.DARK_RED));
+						.formatted(Formatting.DARK_RED));
 	}
 
 	protected String dimension(final int dim) {

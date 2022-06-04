@@ -47,14 +47,14 @@ public final class QRCommandUsage extends AbstractQRStatsCommandBase implements 
 					.append("\n")
 					.append(new LiteralText(" creates a ca. " + dimension(rd)
 							+ " (depending on [text]) blocks horizontal concrete QR code with the bottom left corner below the player\'s feet, representing ")
-									.formatted(Formatting.GRAY)
-									.append(new LiteralText("text").formatted(Formatting.ITALIC)
-											.append(new LiteralText(".").append("\n")
-													.append(new LiteralText(" /qrundo").formatted(Formatting.YELLOW)
-															.formatted(Formatting.ITALIC)
-															.append(new LiteralText(" will undo the last creation.")
-																	.formatted(Formatting.RESET)
-																	.formatted(Formatting.GRAY))))));
+							.formatted(Formatting.GRAY)
+							.append(new LiteralText("text").formatted(Formatting.ITALIC)
+									.append(new LiteralText(".").append("\n")
+											.append(new LiteralText(" /qrundo").formatted(Formatting.YELLOW)
+													.formatted(Formatting.ITALIC)
+													.append(new LiteralText(" will undo the last creation.")
+															.formatted(Formatting.RESET)
+															.formatted(Formatting.GRAY))))));
 
 			final long ms = estimatedMilliseconds(rd);
 
