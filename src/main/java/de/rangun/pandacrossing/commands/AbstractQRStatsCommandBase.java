@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 by Heiko Schäfer <heiko@rangun.de>
+ * Copyright 2021-2022 by Heiko Schäfer <heiko@rangun.de>
  *
  * This file is part of PandaCrossing.
  *
@@ -48,7 +48,7 @@ abstract class AbstractQRStatsCommandBase extends AbstractCommandBase {
 
 	protected String dimension(final int dim) {
 		return (new StringBuilder()).append(dim).append('x').append(dim).append(" (requested size: ")
-				.append(getDimension()).append(')').toString();
+				.append(getDimension()).append("; scale: ").append(getXScale()).append(')').toString();
 	}
 
 }

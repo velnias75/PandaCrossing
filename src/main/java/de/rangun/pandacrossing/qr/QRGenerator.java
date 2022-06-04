@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 by Heiko Schäfer <heiko@rangun.de>
+ * Copyright 2021-2022 by Heiko Schäfer <heiko@rangun.de>
  *
  * This file is part of PandaCrossing.
  *
@@ -38,6 +38,11 @@ import de.rangun.pandacrossing.config.PandaCrossingConfig;
 public final class QRGenerator {
 
 	public interface IBlockTraverser {
+
+		int getXScale();
+
+		int getYScale();
+
 		void traverse(final int x, final int y, final boolean b) throws InterruptedException;
 	};
 
@@ -74,9 +79,29 @@ public final class QRGenerator {
 	public static void traverseQRCode(final IBlockTraverser traverser, final BitMatrix matrix)
 			throws InterruptedException {
 
-		for (int y = 0; y < matrix.getHeight(); ++y) {
-			for (int x = 0; x < matrix.getWidth(); ++x) {
-				traverser.traverse(x, y, matrix.get(x, y));
+		final int m_height = matrix.getHeight();
+		final int m_width = matrix.getWidth();
+
+		final int x_scale = traverser.getXScale();
+		final int y_scale = traverser.getYScale();
+
+		int new_x = 0;
+		int new_y = 0;
+
+		for (int y = 0; y < m_height; ++y) {
+
+			for (int ys = 0; ys < y_scale; ++ys) {
+
+				new_x = 0;
+
+				for (int x = 0; x < m_width; ++x) {
+
+					for (int xs = 0; xs < x_scale; ++xs) {
+						traverser.traverse(new_x++, new_y, matrix.get(x, y));
+					}
+				}
+
+				new_y++;
 			}
 		}
 	}

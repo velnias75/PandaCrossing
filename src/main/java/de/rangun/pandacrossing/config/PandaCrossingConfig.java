@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 by Heiko Schäfer <heiko@rangun.de>
+ * Copyright 2021-2022 by Heiko Schäfer <heiko@rangun.de>
  *
  * This file is part of PandaCrossing.
  *
@@ -48,8 +48,12 @@ public class PandaCrossingConfig implements ConfigData {
 		}
 	};
 
+	@ConfigEntry.BoundedDiscrete(min = 27, max = 256)
+	public int dimension = 27;
+
 	@ConfigEntry.BoundedDiscrete(min = 1, max = 256)
-	public int dimension = 1;
+	public int scale = 1;
+
 //	@ConfigEntry.BoundedDiscrete(min = 0, max = 256)
 //	public int margin = 1;
 	public String preset = "PandaCrossing";

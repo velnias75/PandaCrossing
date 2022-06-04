@@ -3,6 +3,7 @@
 	"category.panda_crossing.keys": "PandaCrossing QR Generator",
 	"text.autoconfig.panda_crossing.title": "PandaCrossing Settings",
 	"text.autoconfig.panda_crossing.option.dimension": "Size (use /qrcalc to get resulting size)",
+	"text.autoconfig.panda_crossing.option.scale": "Scale (use /qrcalc to get resulting size)",
 	"text.autoconfig.panda_crossing.option.preset": "Preset text for /qrpreset command",
 	"text.autoconfig.panda_crossing.option.margin": "Width of margin around QR code",
 	"text.autoconfig.panda_crossing.option.material_black": "Material to use for black parts",

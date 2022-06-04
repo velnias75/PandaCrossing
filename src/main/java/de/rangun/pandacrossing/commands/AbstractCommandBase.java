@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 by Heiko Schäfer <heiko@rangun.de>
+ * Copyright 2021-2022 by Heiko Schäfer <heiko@rangun.de>
  *
  * This file is part of PandaCrossing.
  *
@@ -75,6 +75,24 @@ public abstract class AbstractCommandBase extends AbstractCommandAsyncNotifier {
 		return 1;
 	}
 
+	protected int getXScale() {
+
+		if (PandaCrossingMod.hasClothConfig2()) {
+			return (new ClothConfig2Utils().getConfig()).scale;
+		}
+
+		return 1;
+	}
+
+	protected int getYScale() {
+
+		if (PandaCrossingMod.hasClothConfig2()) {
+			return (new ClothConfig2Utils().getConfig()).scale;
+		}
+
+		return 1;
+	}
+
 	protected String getPreset() {
 
 		if (PandaCrossingMod.hasClothConfig2()) {
@@ -87,9 +105,10 @@ public abstract class AbstractCommandBase extends AbstractCommandAsyncNotifier {
 	protected int getResultingDimension(final String text) throws ConfigException {
 
 		try {
-			return QRGenerator.createQRCodeBitMatrix(text == null ? getPreset() : text, getDimension()).getWidth();
+			return QRGenerator.createQRCodeBitMatrix(text == null ? getPreset() : text, getDimension()).getWidth()
+					* getXScale();
 		} catch (Exception e) {
-			return 30;
+			return 27 * getXScale();
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 by Heiko Schäfer <heiko@rangun.de>
+ * Copyright 2021-2022 by Heiko Schäfer <heiko@rangun.de>
  *
  * This file is part of PandaCrossing.
  *
@@ -159,11 +159,11 @@ public class QRCommand extends AbstractCommandBase
 						}
 					}
 
-					PCUndoCommand.pushUndoMatrix(player, dir, facing, curPos, matrix);
+					PCUndoCommand.pushUndoMatrix(player, dir, facing, curPos, matrix, getXScale(), getYScale());
 					QRGenerator.traverseQRCode(new IBlockTraverser() {
 
 						@Override
-						public void traverse(int x, int y, boolean b) throws InterruptedException {
+						public final void traverse(int x, int y, boolean b) throws InterruptedException {
 
 							final BlockPos nextPos = nextPos(dir, facing, curPos, x, y);
 
@@ -195,6 +195,16 @@ public class QRCommand extends AbstractCommandBase
 									lock.unlock();
 								}
 							}
+						}
+
+						@Override
+						public final int getXScale() {
+							return QRCommand.super.getXScale();
+						}
+
+						@Override
+						public final int getYScale() {
+							return QRCommand.super.getYScale();
 						}
 
 					}, matrix);
