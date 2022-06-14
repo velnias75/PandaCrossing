@@ -35,6 +35,11 @@ import de.rangun.pandacrossing.config.ClothConfig2Utils;
 import de.rangun.pandacrossing.config.ConfigException;
 import de.rangun.pandacrossing.config.PandaCrossingConfig;
 
+//import de.rangun.pandacrossing.PandaCrossingMod;
+//import de.rangun.pandacrossing.config.ClothConfig2Utils;
+//import de.rangun.pandacrossing.config.ConfigException;
+//import de.rangun.pandacrossing.config.PandaCrossingConfig;
+
 public final class QRGenerator {
 
 	public interface IBlockTraverser {
