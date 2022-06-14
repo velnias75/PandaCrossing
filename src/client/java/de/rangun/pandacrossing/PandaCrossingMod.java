@@ -41,6 +41,7 @@ import de.rangun.pandacrossing.commands.QRCalcCommand;
 import de.rangun.pandacrossing.commands.QRCommand;
 import de.rangun.pandacrossing.commands.QRCommandUsage;
 import de.rangun.pandacrossing.commands.QRPresetCommand;
+import de.rangun.pandacrossing.commands.QRSettingsCommand;
 import de.rangun.pandacrossing.config.ClothConfig2Utils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -171,9 +172,14 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 		});
 
 		if (ccu != null) {
+
 			ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
 				dispatcher.register(literal("qrpreset").requires(source -> hasPermission(source.getClient().player))
 						.executes(new QRPresetCommand(this, commandRunningMap, QRDirection.Horizontal)));
+			});
+
+			ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+				dispatcher.register(literal("qrsettings").executes(new QRSettingsCommand()));
 			});
 		}
 
