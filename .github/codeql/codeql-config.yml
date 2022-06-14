@@ -1,2 +1,4 @@
+name: "My CodeQL config"
+
 paths:
-  - src/client/java
+  - src
