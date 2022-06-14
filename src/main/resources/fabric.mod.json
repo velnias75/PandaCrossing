@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "id": "panda_crossing",
+  "version": "${version}",
+
+  "name": "Panda Crossing QR Code Generator",
+  "description": "Creates QR codes",
+  "authors": [
+    "Velnias75"
+  ],
+  "contact": {
+    "issues": "https://github.com/velnias75/PandaCrossing/issues",
+    "sources": "https://github.com/velnias75/PandaCrossing"
+  },
+
+  "license": "GPL-3.0-or-later",
+  "icon": "assets/panda_crossing/panda_crossing.png",
+
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "de.rangun.pandacrossing.PandaCrossingMod"
+    ],
+    "modmenu": [
+      "de.rangun.pandacrossing.config.ModMenu"
+    ]
+  },
+  "mixins": [
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.14.0",
+    "fabric": "*",
+    "minecraft": ">=1.19"
+  },
+  "recommends": {
+    "cloth-config2": ">=7.0.65"
+  },
+  "suggests": {
+    "modmenu": ">=4.0.0"
+  },
+  "custom": {
+    "modmenu": {
+        "links": {
+            "modmenu.discord": "https://discord.gg/kQP9QSG6F4"
+        }
+    }
+}
+}
