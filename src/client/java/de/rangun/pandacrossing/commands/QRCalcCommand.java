@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 by Heiko Schäfer <heiko@rangun.de>
+ * Copyright 2021-2022 by Heiko Schäfer <heiko@rangun.de>
  *
  * This file is part of PandaCrossing.
  *
@@ -26,8 +26,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import de.rangun.pandacrossing.config.ConfigException;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
-import net.minecraft.text.LiteralText;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -82,9 +81,9 @@ public final class QRCalcCommand extends AbstractQRStatsCommandBase implements C
 	@Override
 	public Text feedbackText(CommandContext<FabricClientCommandSource> ctx) {
 
-		MutableText usage = new LiteralText("The created QR code of ").formatted(Formatting.GRAY)
-				.append(new LiteralText("\"" + getQRText(ctx) + "\"").formatted(Formatting.ITALIC)).append(" will be ")
-				.append(new LiteralText(dimension(dim)).formatted(Formatting.ITALIC)).append(" blocks.");
+		MutableText usage = Text.literal("The created QR code of ").formatted(Formatting.GRAY)
+				.append(Text.literal("\"" + getQRText(ctx) + "\"").formatted(Formatting.ITALIC)).append(" will be ")
+				.append(Text.literal(dimension(dim)).formatted(Formatting.ITALIC)).append(" blocks.");
 
 		if (ms > 0) {
 			usage = timeText(usage.append("\n"), ms);

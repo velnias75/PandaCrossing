@@ -41,12 +41,11 @@ import de.rangun.pandacrossing.config.ClothConfig2Utils;
 import de.rangun.pandacrossing.config.ConfigException;
 import de.rangun.pandacrossing.qr.QRGenerator;
 import de.rangun.pandacrossing.qr.QRGenerator.IBlockTraverser;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.block.Block;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -78,7 +77,7 @@ public class QRCommand extends AbstractCommandBase
 
 	@Override
 	public Text feedbackText(final CommandContext<FabricClientCommandSource> ctx) {
-		return new TranslatableText("text.panda_crossing.qrcommand.finished");
+		return Text.translatable("text.panda_crossing.qrcommand.finished");
 	}
 
 	protected String getText(final CommandContext<FabricClientCommandSource> ctx) {
@@ -171,7 +170,7 @@ public class QRCommand extends AbstractCommandBase
 								player.setPos(nextPos.getX(), nextPos.getY() + 1, nextPos.getZ());
 							}
 
-							player.sendChatMessage((new StringBuilder("/setblock ")).append(nextPos.getX()).append(' ')
+							player.sendCommand((new StringBuilder("setblock ")).append(nextPos.getX()).append(' ')
 									.append(nextPos.getY()).append(' ').append(nextPos.getZ()).append(' ')
 									.append((b ? black_material : white_material))
 									.append(blockState(b ? black_material : white_material, facing)).append(" replace")

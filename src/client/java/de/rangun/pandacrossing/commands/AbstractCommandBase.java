@@ -27,8 +27,7 @@ import de.rangun.pandacrossing.PandaCrossingMod;
 import de.rangun.pandacrossing.config.ClothConfig2Utils;
 import de.rangun.pandacrossing.config.ConfigException;
 import de.rangun.pandacrossing.qr.QRGenerator;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
-import net.minecraft.text.LiteralText;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
@@ -122,13 +121,13 @@ public abstract class AbstractCommandBase extends AbstractCommandAsyncNotifier {
 	}
 
 	protected void exceptionFeedback(final CommandContext<FabricClientCommandSource> context, Throwable e) {
-		context.getSource().sendFeedback(new LiteralText(e.getMessage()).formatted(Formatting.DARK_RED)
+		context.getSource().sendFeedback(Text.literal(e.getMessage()).formatted(Formatting.DARK_RED)
 				.formatted(Formatting.BOLD).formatted(Formatting.ITALIC));
 	}
 
 	protected Text runningFeedback() {
-		return new LiteralText("Please wait until execution of last command is finished …")
-				.formatted(Formatting.DARK_RED).formatted(Formatting.ITALIC);
+		return Text.literal("Please wait until execution of last command is finished …").formatted(Formatting.DARK_RED)
+				.formatted(Formatting.ITALIC);
 	}
 
 	protected static BlockPos nextPos(final QRDirection dir, final Direction facing, final BlockPos curPos, final int x,

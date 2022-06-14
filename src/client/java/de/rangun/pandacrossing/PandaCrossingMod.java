@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 by Heiko Schäfer <heiko@rangun.de>
+ * Copyright 2021-2022 by Heiko Schäfer <heiko@rangun.de>
  *
  * This file is part of PandaCrossing.
  *
@@ -20,9 +20,8 @@
 package de.rangun.pandacrossing;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
-import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.DISPATCHER;
-import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.argument;
-import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.literal;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -31,8 +30,8 @@ import java.util.Map;
 
 import org.lwjgl.glfw.GLFW;
 
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.tree.LiteralCommandNode;
 
 import de.rangun.pandacrossing.commands.AbstractCommandBase.QRDirection;
 import de.rangun.pandacrossing.commands.ICommandAsyncListener;
@@ -44,7 +43,8 @@ import de.rangun.pandacrossing.commands.QRCommandUsage;
 import de.rangun.pandacrossing.commands.QRPresetCommand;
 import de.rangun.pandacrossing.config.ClothConfig2Utils;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -56,11 +56,9 @@ import net.fabricmc.loader.util.version.SemanticVersionPredicateParser;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.network.MessageType;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Util;
 
 public final class PandaCrossingMod implements ClientModInitializer, ICommandAsyncListener {
 
@@ -111,23 +109,23 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 
 			if (showMsg) {
 
-				final MutableText welcomeMsg = new LiteralText("Welcome to PandaCrossing, ").formatted(Formatting.AQUA)
-						.append(new LiteralText(client.player.getDisplayName().asString()).formatted(Formatting.RED)
-								.append(new LiteralText(" :-)").formatted(Formatting.AQUA)));
+				final MutableText welcomeMsg = Text.literal("Welcome to PandaCrossing, ").formatted(Formatting.AQUA)
+						.append(Text.literal(client.player.getDisplayName().getString()).formatted(Formatting.RED)
+								.append(Text.literal(" :-)").formatted(Formatting.AQUA)));
 
 //			if (!hasPermission(client.player)) {
 //				welcomeMsg.append("\n").append(
-//						new LiteralText("You don't seem to have the permission to use PandaCrossing on this server :-(")
+//						Text.literal("You don't seem to have the permission to use PandaCrossing on this server :-(")
 //								.formatted(Formatting.DARK_RED));
 //			}
 
 				if (hasClothConfig2()) {
-					welcomeMsg.append("\n").append(new LiteralText("Press \'"))
+					welcomeMsg.append("\n").append(Text.literal("Press \'"))
 							.append(keyBinding.getBoundKeyLocalizedText())
-							.append(new LiteralText("\' to access the settings menu."));
+							.append(Text.literal("\' to access the settings menu."));
 				}
 
-				client.inGameHud.addChatMessage(MessageType.SYSTEM, welcomeMsg, Util.NIL_UUID);
+				client.inGameHud.getChatHud().addMessage(welcomeMsg);
 			}
 		});
 
@@ -149,39 +147,55 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 			}
 		});
 
-		final LiteralCommandNode<FabricClientCommandSource> undo = DISPATCHER
-				.register(literal("pcundo").requires(source -> hasPermission(source.getClient().player))
-						.executes(new PCUndoCommand(this, commandRunningMap)));
+		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+			dispatcher.register(undoBuilder("pcundo"));
+		});
 
-		DISPATCHER.register(literal("qr").requires(source -> hasPermission(source.getClient().player))
-				.then(argument("text", greedyString())
-						.executes(new QRCommand(this, commandRunningMap, QRDirection.Horizontal)))
-				.executes(new QRCommandUsage()));
+		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+			dispatcher.register(literal("qr").requires(source -> hasPermission(source.getClient().player))
+					.then(argument("text", greedyString())
+							.executes(new QRCommand(this, commandRunningMap, QRDirection.Horizontal)))
+					.executes(new QRCommandUsage()));
+		});
 
-		DISPATCHER.register(
-				literal("qrcalc").then(argument("text", greedyString()).executes(new QRCalcCommand(this, false)))
-						.executes(new QRCalcCommand(this, true)));
+		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+			dispatcher.register(
+					literal("qrcalc").then(argument("text", greedyString()).executes(new QRCalcCommand(this, false)))
+							.executes(new QRCalcCommand(this, true)));
+		});
 
-		DISPATCHER.register(literal("qrundo").redirect(undo));
+		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+			dispatcher.register(undoBuilder("qrundo"));
+		});
 
 		if (ccu != null) {
-			DISPATCHER.register(literal("qrpreset").requires(source -> hasPermission(source.getClient().player))
-					.executes(new QRPresetCommand(this, commandRunningMap, QRDirection.Horizontal)));
+			ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+				dispatcher.register(literal("qrpreset").requires(source -> hasPermission(source.getClient().player))
+						.executes(new QRPresetCommand(this, commandRunningMap, QRDirection.Horizontal)));
+			});
 		}
 
-		DISPATCHER.register(literal("vqrpreset").requires(source -> hasPermission(source.getClient().player))
-				.executes(new QRPresetCommand(this, commandRunningMap, QRDirection.Vertical)));
+		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+			dispatcher.register(literal("vqrpreset").requires(source -> hasPermission(source.getClient().player))
+					.executes(new QRPresetCommand(this, commandRunningMap, QRDirection.Vertical)));
+		});
 
-		DISPATCHER.register(literal("vqr").requires(source -> hasPermission(source.getClient().player))
-				.then(argument("text", greedyString())
-						.executes(new QRCommand(this, commandRunningMap, QRDirection.Vertical))));
+		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+			dispatcher.register(literal("vqr").requires(source -> hasPermission(source.getClient().player))
+					.then(argument("text", greedyString())
+							.executes(new QRCommand(this, commandRunningMap, QRDirection.Vertical))));
+		});
 
-		DISPATCHER.register(literal("sqrpreset").requires(source -> hasPermission(source.getClient().player))
-				.executes(new QRPresetCommand(this, commandRunningMap, QRDirection.Stairway)));
+		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+			dispatcher.register(literal("sqrpreset").requires(source -> hasPermission(source.getClient().player))
+					.executes(new QRPresetCommand(this, commandRunningMap, QRDirection.Stairway)));
+		});
 
-		DISPATCHER.register(literal("sqr").requires(source -> hasPermission(source.getClient().player))
-				.then(argument("text", greedyString())
-						.executes(new QRCommand(this, commandRunningMap, QRDirection.Stairway))));
+		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+			dispatcher.register(literal("sqr").requires(source -> hasPermission(source.getClient().player))
+					.then(argument("text", greedyString())
+							.executes(new QRCommand(this, commandRunningMap, QRDirection.Stairway))));
+		});
 
 		if (ccu != null) {
 
@@ -193,6 +207,12 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 				}
 			});
 		}
+	}
+
+	private LiteralArgumentBuilder<FabricClientCommandSource> undoBuilder(final String cmd) {
+
+		return literal(cmd).requires(source -> hasPermission(source.getClient().player))
+				.executes(new PCUndoCommand(this, commandRunningMap));
 	}
 
 	private static boolean hasPermission(final ClientPlayerEntity player) {

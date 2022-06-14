@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 by Heiko Schäfer <heiko@rangun.de>
+ * Copyright 2021-2022 by Heiko Schäfer <heiko@rangun.de>
  *
  * This file is part of PandaCrossing.
  *
@@ -24,8 +24,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import de.rangun.pandacrossing.config.ConfigException;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
-import net.minecraft.text.LiteralText;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -42,17 +41,17 @@ public final class QRCommandUsage extends AbstractQRStatsCommandBase implements 
 		try {
 			final int rd = getResultingDimension(null);
 
-			final MutableText usage = new LiteralText("Usage: ").formatted(Formatting.DARK_RED)
-					.append(new LiteralText("/qr [text]").formatted(Formatting.YELLOW).formatted(Formatting.ITALIC))
+			final MutableText usage = Text.literal("Usage: ").formatted(Formatting.DARK_RED)
+					.append(Text.literal("/qr [text]").formatted(Formatting.YELLOW).formatted(Formatting.ITALIC))
 					.append("\n")
-					.append(new LiteralText(" creates a ca. " + dimension(rd)
+					.append(Text.literal(" creates a ca. " + dimension(rd)
 							+ " (depending on [text]) blocks horizontal concrete QR code with the bottom left corner below the player\'s feet, representing ")
 							.formatted(Formatting.GRAY)
-							.append(new LiteralText("text").formatted(Formatting.ITALIC)
-									.append(new LiteralText(".").append("\n")
-											.append(new LiteralText(" /qrundo").formatted(Formatting.YELLOW)
+							.append(Text.literal("text").formatted(Formatting.ITALIC)
+									.append(Text.literal(".").append("\n")
+											.append(Text.literal(" /qrundo").formatted(Formatting.YELLOW)
 													.formatted(Formatting.ITALIC)
-													.append(new LiteralText(" will undo the last creation.")
+													.append(Text.literal(" will undo the last creation.")
 															.formatted(Formatting.RESET)
 															.formatted(Formatting.GRAY))))));
 

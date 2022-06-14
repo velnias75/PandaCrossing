@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 by Heiko Schäfer <heiko@rangun.de>
+ * Copyright 2021-2022 by Heiko Schäfer <heiko@rangun.de>
  *
  * This file is part of PandaCrossing.
  *
@@ -19,13 +19,28 @@
 
 package de.rangun.pandacrossing.commands;
 
+import java.util.Map;
+
 import com.mojang.brigadier.context.CommandContext;
 
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
-import net.minecraft.text.Text;
+import de.rangun.pandacrossing.PandaCrossingMod;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
-public interface ICommandAsyncNotifier {
-	String commandName();
+public final class QRPresetCommand extends QRCommand {
 
-	Text feedbackText(final CommandContext<FabricClientCommandSource> ctx);
+	public QRPresetCommand(PandaCrossingMod mod, Map<ICommandAsyncNotifier, Boolean> commandRunningMap,
+			QRDirection dir) {
+		super(mod, commandRunningMap, dir);
+	}
+
+	@Override
+	public String commandName() {
+		return "QRPresetCommand";
+	}
+
+	@Override
+	protected String getText(CommandContext<FabricClientCommandSource> ctx) {
+		return getPreset();
+	}
+
 }

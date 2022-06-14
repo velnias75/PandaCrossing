@@ -35,13 +35,11 @@ import de.rangun.pandacrossing.IPandaCrossingModEventListener;
 import de.rangun.pandacrossing.PandaCrossingMod;
 import de.rangun.pandacrossing.qr.QRGenerator;
 import de.rangun.pandacrossing.qr.QRGenerator.IBlockTraverser;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.state.property.Property;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -114,8 +112,8 @@ public final class PCUndoCommand extends AbstractCommandBase
 
 				for (final UndoBlock v2 : v1) {
 
-					player.sendChatMessage("/setblock " + v2.pos.getX() + " " + v2.pos.getY() + " " + v2.pos.getZ()
-							+ " " + BLOCK.getId(v2.state.getBlock()) + deserializeBlockState(v2.state) + " replace");
+					player.sendCommand("setblock " + v2.pos.getX() + " " + v2.pos.getY() + " " + v2.pos.getZ() + " "
+							+ BLOCK.getId(v2.state.getBlock()) + deserializeBlockState(v2.state) + " replace");
 
 					if (delay > 0) {
 						TimeUnit.MILLISECONDS.sleep(delay);
@@ -149,8 +147,8 @@ public final class PCUndoCommand extends AbstractCommandBase
 
 	@Override
 	public Text feedbackText(final CommandContext<FabricClientCommandSource> ctx) {
-		return undoSuccess ? new TranslatableText("text.panda_crossing.undo.success").formatted(Formatting.BOLD)
-				: new TranslatableText("text.panda_crossing.undo.nothing").formatted(Formatting.DARK_RED)
+		return undoSuccess ? Text.translatable("text.panda_crossing.undo.success").formatted(Formatting.BOLD)
+				: Text.translatable("text.panda_crossing.undo.nothing").formatted(Formatting.DARK_RED)
 						.formatted(Formatting.ITALIC);
 	}
 
@@ -168,7 +166,7 @@ public final class PCUndoCommand extends AbstractCommandBase
 				try {
 					undoSuccess = popUndoMatrix(ctx.getSource().getPlayer());
 				} catch (Exception e) {
-					ctx.getSource().sendFeedback(new LiteralText(e.getMessage()).formatted(Formatting.DARK_RED)
+					ctx.getSource().sendFeedback(Text.literal(e.getMessage()).formatted(Formatting.DARK_RED)
 							.formatted(Formatting.BOLD).formatted(Formatting.ITALIC));
 				}
 

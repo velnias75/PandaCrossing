@@ -21,8 +21,8 @@ package de.rangun.pandacrossing.commands;
 
 import java.util.concurrent.TimeUnit;
 
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 abstract class AbstractQRStatsCommandBase extends AbstractCommandBase {
@@ -36,13 +36,13 @@ abstract class AbstractQRStatsCommandBase extends AbstractCommandBase {
 	}
 
 	protected MutableText timeText(final MutableText text, final long ms) {
-		return text
-				.append(new LiteralText("Placing or undoing the QR code will take around: ").formatted(Formatting.GRAY))
-				.append(new LiteralText(String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(ms),
-						TimeUnit.MILLISECONDS.toMinutes(ms)
-								- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(ms)),
-						TimeUnit.MILLISECONDS.toSeconds(ms)
-								- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(ms))))
+		return text.append(Text.literal("Placing or undoing the QR code will take around: ").formatted(Formatting.GRAY))
+				.append(Text
+						.literal(String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(ms),
+								TimeUnit.MILLISECONDS.toMinutes(ms)
+										- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(ms)),
+								TimeUnit.MILLISECONDS.toSeconds(ms)
+										- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(ms))))
 						.formatted(Formatting.DARK_RED));
 	}
 
