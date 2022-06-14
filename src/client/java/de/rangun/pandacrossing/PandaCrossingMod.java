@@ -147,8 +147,10 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 			}
 		});
 
+		final PCUndoCommand undo = new PCUndoCommand(this, commandRunningMap);
+
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
-			dispatcher.register(undoBuilder("pcundo"));
+			dispatcher.register(undoCommandBuilder("pcundo", undo));
 		});
 
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
@@ -165,7 +167,7 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 		});
 
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
-			dispatcher.register(undoBuilder("qrundo"));
+			dispatcher.register(undoCommandBuilder("qrundo", undo));
 		});
 
 		if (ccu != null) {
@@ -209,10 +211,10 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 		}
 	}
 
-	private LiteralArgumentBuilder<FabricClientCommandSource> undoBuilder(final String cmd) {
+	private LiteralArgumentBuilder<FabricClientCommandSource> undoCommandBuilder(final String cmd,
+			final PCUndoCommand cmdObject) {
 
-		return literal(cmd).requires(source -> hasPermission(source.getClient().player))
-				.executes(new PCUndoCommand(this, commandRunningMap));
+		return literal(cmd).requires(source -> hasPermission(source.getClient().player)).executes(cmdObject);
 	}
 
 	private static boolean hasPermission(final ClientPlayerEntity player) {
