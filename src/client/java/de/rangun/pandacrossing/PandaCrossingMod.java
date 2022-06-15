@@ -57,7 +57,10 @@ import net.fabricmc.loader.util.version.SemanticVersionPredicateParser;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.HoverEvent;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -110,9 +113,12 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 
 			if (showMsg) {
 
-				final MutableText welcomeMsg = Text.literal("Welcome to PandaCrossing, ").formatted(Formatting.AQUA)
-						.append(Text.literal(client.player.getDisplayName().getString()).formatted(Formatting.RED)
-								.append(Text.literal(" :-)").formatted(Formatting.AQUA)));
+				final MutableText welcomeMsg = Text.empty()
+						.append(Text.literal("Welcome to PandaCrossing, ").formatted(Formatting.AQUA)
+								.append(Text.literal(client.player.getDisplayName().getString())
+										.formatted(Formatting.RED))
+								.append(Text.literal(" :-)")))
+						.formatted(Formatting.AQUA);
 
 //			if (!hasPermission(client.player)) {
 //				welcomeMsg.append("\n").append(
@@ -121,9 +127,27 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 //			}
 
 				if (hasClothConfig2()) {
-					welcomeMsg.append("\n").append(Text.literal("Press \'"))
-							.append(keyBinding.getBoundKeyLocalizedText())
-							.append(Text.literal("\' to access the settings menu."));
+					welcomeMsg.append("\n")
+							.append(Text.literal("Press \'").append(keyBinding.getBoundKeyLocalizedText())
+									.append(Text.literal("\' to access the ").append(Text.literal("settings menu")
+											.setStyle(Style.EMPTY.withClickEvent(
+													new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/qrsettings"))))
+											.append(Text.literal(".")))
+									.formatted(Formatting.DARK_AQUA));
+				} else {
+
+					final String ccUrl_desc = "https://www.curseforge.com/minecraft/mc-mods/cloth-config";
+					final String ccUrl_vers = ccUrl_desc + "/files/all?filter-game-version=1738749986%3a73407";
+
+					welcomeMsg.append("\n").append("\n")
+							.append(Text.literal("Cloth Config API")
+									.setStyle(Style.EMPTY.withHoverEvent(
+											new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal(ccUrl_desc)))
+											.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, ccUrl_vers)))
+									.formatted(Formatting.GREEN, Formatting.ITALIC, Formatting.UNDERLINE))
+							.append(Text.literal(" is ").formatted(Formatting.YELLOW))
+							.append(Text.literal("strongly recommended").formatted(Formatting.BOLD, Formatting.YELLOW))
+							.append(Text.literal(" to unlock all features!").formatted(Formatting.YELLOW));
 				}
 
 				client.inGameHud.getChatHud().addMessage(welcomeMsg);
