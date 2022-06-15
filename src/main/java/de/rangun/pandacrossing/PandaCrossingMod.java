@@ -137,7 +137,7 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 				} else {
 
 					final String ccUrl_desc = "https://www.curseforge.com/minecraft/mc-mods/cloth-config";
-					final String ccUrl_vers = ccUrl_desc + "/files/all?filter-game-version=1738749986%3a73407";
+					final String ccUrl_vers = ccUrl_desc + "/files/all?filter-game-version=1738749986%3a73250";
 
 					welcomeMsg
 							.append("\n").append("\n").append(new LiteralText("Cloth Config API")
