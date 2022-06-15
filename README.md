@@ -1,4 +1,4 @@
-# PandaCrossing [![Build Status](https://travis-ci.com/velnias75/PandaCrossing.svg?branch=main)](https://travis-ci.com/velnias75/PandaCrossing)
+# PandaCrossing [![Build Status](https://travis-ci.com/velnias75/PandaCrossing.svg?branch=1.18)](https://travis-ci.com/velnias75/PandaCrossing)
 A *Fabric Mod* to create QR codes
 
 This simple mod creates a horizontal, vertical or stairway QR code with the bottom left corner below the player's feet resp. in front of the player, representing *a given text*.
