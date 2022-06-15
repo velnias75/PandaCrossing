@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 by Heiko Schäfer <heiko@rangun.de>
+ * Copyright 2021-2022 by Heiko Schäfer <heiko@rangun.de>
  *
  * This file is part of PandaCrossing.
  *
@@ -31,8 +31,8 @@ import java.util.Map;
 
 import org.lwjgl.glfw.GLFW;
 
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.tree.LiteralCommandNode;
 
 import de.rangun.pandacrossing.commands.AbstractCommandBase.QRDirection;
 import de.rangun.pandacrossing.commands.ICommandAsyncListener;
@@ -42,6 +42,7 @@ import de.rangun.pandacrossing.commands.QRCalcCommand;
 import de.rangun.pandacrossing.commands.QRCommand;
 import de.rangun.pandacrossing.commands.QRCommandUsage;
 import de.rangun.pandacrossing.commands.QRPresetCommand;
+import de.rangun.pandacrossing.commands.QRSettingsCommand;
 import de.rangun.pandacrossing.config.ClothConfig2Utils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
@@ -56,11 +57,12 @@ import net.fabricmc.loader.util.version.SemanticVersionPredicateParser;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.network.MessageType;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.HoverEvent;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Util;
 
 public final class PandaCrossingMod implements ClientModInitializer, ICommandAsyncListener {
 
@@ -111,9 +113,12 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 
 			if (showMsg) {
 
-				final MutableText welcomeMsg = new LiteralText("Welcome to PandaCrossing, ").formatted(Formatting.AQUA)
-						.append(new LiteralText(client.player.getDisplayName().asString()).formatted(Formatting.RED)
-								.append(new LiteralText(" :-)").formatted(Formatting.AQUA)));
+				final MutableText welcomeMsg = (new LiteralText(""))
+						.append(new LiteralText("Welcome to PandaCrossing, ").formatted(Formatting.AQUA)
+								.append(new LiteralText(client.player.getDisplayName().getString())
+										.formatted(Formatting.RED))
+								.append(new LiteralText(" :-)")))
+						.formatted(Formatting.AQUA);
 
 //			if (!hasPermission(client.player)) {
 //				welcomeMsg.append("\n").append(
@@ -122,12 +127,32 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 //			}
 
 				if (hasClothConfig2()) {
-					welcomeMsg.append("\n").append(new LiteralText("Press \'"))
+					welcomeMsg.append("\n").append(new LiteralText("Press \'")
 							.append(keyBinding.getBoundKeyLocalizedText())
-							.append(new LiteralText("\' to access the settings menu."));
+							.append(new LiteralText("\' to access the ")
+									.append(new LiteralText("settings menu").setStyle(Style.EMPTY.withClickEvent(
+											new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/qrsettings"))))
+									.append(new LiteralText(".")))
+							.formatted(Formatting.DARK_AQUA));
+				} else {
+
+					final String ccUrl_desc = "https://www.curseforge.com/minecraft/mc-mods/cloth-config";
+					final String ccUrl_vers = ccUrl_desc + "/files/all?filter-game-version=1738749986%3a73407";
+
+					welcomeMsg
+							.append("\n").append("\n").append(new LiteralText("Cloth Config API")
+									.setStyle(Style.EMPTY
+											.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+													new LiteralText(ccUrl_desc)))
+											.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, ccUrl_vers)))
+									.formatted(Formatting.GREEN, Formatting.ITALIC, Formatting.UNDERLINE))
+							.append(new LiteralText(" is ").formatted(Formatting.YELLOW))
+							.append(new LiteralText("strongly recommended").formatted(Formatting.BOLD,
+									Formatting.YELLOW))
+							.append(new LiteralText(" to unlock all features!").formatted(Formatting.YELLOW));
 				}
 
-				client.inGameHud.addChatMessage(MessageType.SYSTEM, welcomeMsg, Util.NIL_UUID);
+				client.inGameHud.getChatHud().addMessage(welcomeMsg);
 			}
 		});
 
@@ -149,9 +174,9 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 			}
 		});
 
-		final LiteralCommandNode<FabricClientCommandSource> undo = DISPATCHER
-				.register(literal("pcundo").requires(source -> hasPermission(source.getClient().player))
-						.executes(new PCUndoCommand(this, commandRunningMap)));
+		final PCUndoCommand undo = new PCUndoCommand(this, commandRunningMap);
+
+		DISPATCHER.register(undoCommandBuilder("pcundo", undo));
 
 		DISPATCHER.register(literal("qr").requires(source -> hasPermission(source.getClient().player))
 				.then(argument("text", greedyString())
@@ -162,11 +187,15 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 				literal("qrcalc").then(argument("text", greedyString()).executes(new QRCalcCommand(this, false)))
 						.executes(new QRCalcCommand(this, true)));
 
-		DISPATCHER.register(literal("qrundo").redirect(undo));
+		DISPATCHER.register(undoCommandBuilder("qrundo", undo));
 
 		if (ccu != null) {
+
 			DISPATCHER.register(literal("qrpreset").requires(source -> hasPermission(source.getClient().player))
 					.executes(new QRPresetCommand(this, commandRunningMap, QRDirection.Horizontal)));
+
+			DISPATCHER.register(literal("qrsettings").executes(new QRSettingsCommand()));
+
 		}
 
 		DISPATCHER.register(literal("vqrpreset").requires(source -> hasPermission(source.getClient().player))
@@ -193,6 +222,12 @@ public final class PandaCrossingMod implements ClientModInitializer, ICommandAsy
 				}
 			});
 		}
+	}
+
+	private LiteralArgumentBuilder<FabricClientCommandSource> undoCommandBuilder(final String cmd,
+			final PCUndoCommand cmdObject) {
+
+		return literal(cmd).requires(source -> hasPermission(source.getClient().player)).executes(cmdObject);
 	}
 
 	private static boolean hasPermission(final ClientPlayerEntity player) {
