@@ -1,4 +1,4 @@
-# PandaCrossing [![Build Status](https://travis-ci.com/velnias75/PandaCrossing.svg?branch=1.19)](https://travis-ci.com/velnias75/PandaCrossing) [![Java CI with Gradle](https://github.com/velnias75/PandaCrossing/actions/workflows/gradle.yml/badge.svg?branch=1.19)](https://github.com/velnias75/PandaCrossing/actions/workflows/gradle.yml)
+# PandaCrossing [![Build Status](https://travis-ci.com/velnias75/PandaCrossing.svg?branch=1.19)](https://travis-ci.com/velnias75/PandaCrossing) [![Java CI with Gradle](https://github.com/velnias75/PandaCrossing/actions/workflows/gradle.yml/badge.svg?branch=1.19)](https://github.com/velnias75/PandaCrossing/actions/workflows/gradle.yml) ![Curseforge](https://cf.way2muchnoise.eu/versions/488463.svg) ![Curseforge](https://cf.way2muchnoise.eu/full_488463_downloads.svg)
 A *Fabric Mod* to create QR codes
 
 This simple mod creates a horizontal, vertical or stairway QR code with the bottom left corner below the player's feet resp. in front of the player, representing *a given text*.
