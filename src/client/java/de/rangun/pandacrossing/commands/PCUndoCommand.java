@@ -33,6 +33,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import de.rangun.pandacrossing.IPandaCrossingModEventListener;
 import de.rangun.pandacrossing.PandaCrossingMod;
+import de.rangun.pandacrossing.qr.QRConfigurator;
 import de.rangun.pandacrossing.qr.QRGenerator;
 import de.rangun.pandacrossing.qr.QRGenerator.IBlockTraverser;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -62,8 +63,9 @@ public final class PCUndoCommand extends AbstractCommandBase
 		}
 	}
 
-	public PCUndoCommand(PandaCrossingMod mod, Map<ICommandAsyncNotifier, Boolean> commandRunningMap) {
-		super(mod, commandRunningMap);
+	public PCUndoCommand(PandaCrossingMod mod, Map<ICommandAsyncNotifier, Boolean> commandRunningMap,
+			final QRConfigurator conf) {
+		super(mod, commandRunningMap, conf);
 		mod.registerCleanUpListener(this);
 	}
 

@@ -21,18 +21,19 @@ package de.rangun.pandacrossing.commands;
 
 import java.util.concurrent.TimeUnit;
 
+import de.rangun.pandacrossing.qr.QRConfigurator;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 abstract class AbstractQRStatsCommandBase extends AbstractCommandBase {
 
-	protected AbstractQRStatsCommandBase() {
-		super();
+	protected AbstractQRStatsCommandBase(final QRConfigurator conf) {
+		super(conf);
 	}
 
-	protected AbstractQRStatsCommandBase(ICommandAsyncListener l) {
-		super(l);
+	protected AbstractQRStatsCommandBase(ICommandAsyncListener l, final QRConfigurator conf) {
+		super(l, conf);
 	}
 
 	protected MutableText timeText(final MutableText text, final long ms) {

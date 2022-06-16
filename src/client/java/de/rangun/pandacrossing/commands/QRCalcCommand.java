@@ -25,7 +25,8 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import de.rangun.pandacrossing.config.ConfigException;
+import de.rangun.pandacrossing.qr.ConfigException;
+import de.rangun.pandacrossing.qr.QRConfigurator;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -37,8 +38,8 @@ public final class QRCalcCommand extends AbstractQRStatsCommandBase implements C
 	private int dim;
 	private long ms;
 
-	public QRCalcCommand(final ICommandAsyncListener l, boolean usePreset) {
-		super(l);
+	public QRCalcCommand(final ICommandAsyncListener l, boolean usePreset, final QRConfigurator conf) {
+		super(l, conf);
 		this.usePreset = usePreset;
 	}
 

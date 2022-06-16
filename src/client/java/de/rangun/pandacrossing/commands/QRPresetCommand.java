@@ -24,13 +24,14 @@ import java.util.Map;
 import com.mojang.brigadier.context.CommandContext;
 
 import de.rangun.pandacrossing.PandaCrossingMod;
+import de.rangun.pandacrossing.qr.QRConfigurator;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
 public final class QRPresetCommand extends QRCommand {
 
-	public QRPresetCommand(PandaCrossingMod mod, Map<ICommandAsyncNotifier, Boolean> commandRunningMap,
-			QRDirection dir) {
-		super(mod, commandRunningMap, dir);
+	public QRPresetCommand(PandaCrossingMod mod, Map<ICommandAsyncNotifier, Boolean> commandRunningMap, QRDirection dir,
+			final QRConfigurator conf) {
+		super(mod, commandRunningMap, dir, conf);
 	}
 
 	@Override

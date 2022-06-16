@@ -23,7 +23,8 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import de.rangun.pandacrossing.config.ConfigException;
+import de.rangun.pandacrossing.qr.ConfigException;
+import de.rangun.pandacrossing.qr.QRConfigurator;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -31,8 +32,8 @@ import net.minecraft.util.Formatting;
 
 public final class QRCommandUsage extends AbstractQRStatsCommandBase implements Command<FabricClientCommandSource> {
 
-	public QRCommandUsage() {
-		super();
+	public QRCommandUsage(final QRConfigurator conf) {
+		super(conf);
 	}
 
 	@Override

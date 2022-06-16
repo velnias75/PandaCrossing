@@ -38,7 +38,8 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.rangun.pandacrossing.IPandaCrossingModEventListener;
 import de.rangun.pandacrossing.PandaCrossingMod;
 import de.rangun.pandacrossing.config.ClothConfig2Utils;
-import de.rangun.pandacrossing.config.ConfigException;
+import de.rangun.pandacrossing.qr.ConfigException;
+import de.rangun.pandacrossing.qr.QRConfigurator;
 import de.rangun.pandacrossing.qr.QRGenerator;
 import de.rangun.pandacrossing.qr.QRGenerator.IBlockTraverser;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -63,8 +64,8 @@ public class QRCommand extends AbstractCommandBase
 	private final QRDirection dir;
 
 	public QRCommand(final PandaCrossingMod mod, Map<ICommandAsyncNotifier, Boolean> commandRunningMap,
-			final QRDirection dir) {
-		super(mod, commandRunningMap);
+			final QRDirection dir, final QRConfigurator conf) {
+		super(mod, commandRunningMap, conf);
 		this.dir = dir;
 
 		mod.registerCleanUpListener(this);
@@ -140,7 +141,7 @@ public class QRCommand extends AbstractCommandBase
 
 				try {
 
-					final BitMatrix matrix = QRGenerator.createQRCodeBitMatrix(txt, getDimension());
+					final BitMatrix matrix = QRGenerator.createQRCodeBitMatrix(txt, getDimension(), conf);
 					final Direction facing = player.getHorizontalFacing();
 
 					final ClothConfig2Utils ccu = PandaCrossingMod.hasClothConfig2() ? (new ClothConfig2Utils()) : null;

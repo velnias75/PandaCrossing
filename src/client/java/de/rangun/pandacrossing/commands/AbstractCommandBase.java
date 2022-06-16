@@ -25,7 +25,8 @@ import com.mojang.brigadier.context.CommandContext;
 
 import de.rangun.pandacrossing.PandaCrossingMod;
 import de.rangun.pandacrossing.config.ClothConfig2Utils;
-import de.rangun.pandacrossing.config.ConfigException;
+import de.rangun.pandacrossing.qr.ConfigException;
+import de.rangun.pandacrossing.qr.QRConfigurator;
 import de.rangun.pandacrossing.qr.QRGenerator;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.text.Text;
@@ -37,23 +38,29 @@ public abstract class AbstractCommandBase extends AbstractCommandAsyncNotifier {
 
 	protected final Map<ICommandAsyncNotifier, Boolean> runningMap;
 
+	protected final QRConfigurator conf;
+
 	public static enum QRDirection {
 		Horizontal, Vertical, Stairway
 	};
 
-	protected AbstractCommandBase() {
+	protected AbstractCommandBase(final QRConfigurator conf) {
 		super();
 		runningMap = null;
+		this.conf = conf;
 	}
 
-	protected AbstractCommandBase(ICommandAsyncListener l) {
+	protected AbstractCommandBase(ICommandAsyncListener l, final QRConfigurator conf) {
 		super(l);
 		runningMap = null;
+		this.conf = conf;
 	}
 
-	protected AbstractCommandBase(PandaCrossingMod mod, final Map<ICommandAsyncNotifier, Boolean> map) {
+	protected AbstractCommandBase(PandaCrossingMod mod, final Map<ICommandAsyncNotifier, Boolean> map,
+			final QRConfigurator conf) {
 		super(mod);
 		runningMap = map;
+		this.conf = conf;
 	}
 
 	protected int getDelay() {
@@ -104,7 +111,7 @@ public abstract class AbstractCommandBase extends AbstractCommandAsyncNotifier {
 	protected int getResultingDimension(final String text) throws ConfigException {
 
 		try {
-			return QRGenerator.createQRCodeBitMatrix(text == null ? getPreset() : text, getDimension()).getWidth()
+			return QRGenerator.createQRCodeBitMatrix(text == null ? getPreset() : text, getDimension(), conf).getWidth()
 					* getXScale();
 		} catch (Exception e) {
 			return 27 * getXScale();

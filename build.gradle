@@ -175,6 +175,7 @@ shadowJar {
     configurations = [project.configurations.shadow]
     
     from sourceSets.client.output
+    from sourceSets.main.output
     
     relocate 'com.google.zxing', 'de.rangun.pandacrossing.shadowed.com.google.zxing'
 

@@ -28,17 +28,6 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-
-import de.rangun.pandacrossing.PandaCrossingMod;
-import de.rangun.pandacrossing.config.ClothConfig2Utils;
-import de.rangun.pandacrossing.config.ConfigException;
-import de.rangun.pandacrossing.config.PandaCrossingConfig;
-
-//import de.rangun.pandacrossing.PandaCrossingMod;
-//import de.rangun.pandacrossing.config.ClothConfig2Utils;
-//import de.rangun.pandacrossing.config.ConfigException;
-//import de.rangun.pandacrossing.config.PandaCrossingConfig;
 
 public final class QRGenerator {
 
@@ -51,27 +40,16 @@ public final class QRGenerator {
 		void traverse(final int x, final int y, final boolean b) throws InterruptedException;
 	};
 
-	public static BitMatrix createQRCodeBitMatrix(final String qrCodeData, final int dimension)
-			throws WriterException, ConfigException {
+	private QRGenerator() {
+	}
+
+	public static BitMatrix createQRCodeBitMatrix(final String qrCodeData, final int dimension,
+			final QRConfigurator conf) throws WriterException, ConfigException {
 
 		@SuppressWarnings("rawtypes")
 		final Map<EncodeHintType, Comparable> hintMap = new HashMap<>(2);
-
-		if (PandaCrossingMod.hasClothConfig2()) {
-
-			final PandaCrossingConfig ccu = (new ClothConfig2Utils()).getConfig();
-
-			hintMap.put(EncodeHintType.ERROR_CORRECTION, ccu.error_correction_level.level);
-
-//			if (ccu.margin > 0) {
-//				hintMap.put(EncodeHintType.MARGIN, ccu.margin);
-//			}
-			hintMap.put(EncodeHintType.MARGIN, 1);
-
-		} else {
-			hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.Q);
-			hintMap.put(EncodeHintType.MARGIN, 1);
-		}
+		hintMap.put(EncodeHintType.ERROR_CORRECTION, conf.errorCorrectionLevel());
+		hintMap.put(EncodeHintType.MARGIN, 1);
 
 		if (qrCodeData.isEmpty() || "".equals(qrCodeData))
 			throw new ConfigException("Text cannot be empty");
