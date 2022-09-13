@@ -28,18 +28,18 @@
 	"depends": {
 		"fabricloader": ">=0.14.0",
 		"fabric": "*",
-		"minecraft": ">=1.19.1-rc.1"
+		"minecraft": ">=1.19.2"
 	},
 	"recommends": {
-		"cloth-config2": ">=7.0.65"
+		"cloth-config2": ">=8.0.75"
 	},
 	"suggests": {
-		"modmenu": ">=4.0.0"
+		"modmenu": ">=4.0.6"
 	},
 	"custom": {
 		"modmenu": {
 			"links": {
-				"modmenu.discord": "https://discord.gg/kQP9QSG6F4"
+				"modmenu.discord": "https://discord.gg/tkX9BcwCCS"
 			}
 		}
 	}
