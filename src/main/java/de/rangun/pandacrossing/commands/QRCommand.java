@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 by Heiko Schäfer <heiko@rangun.de>
+ * Copyright 2021-2022 by Heiko Schäfer <heiko@rangun.de>
  *
  * This file is part of PandaCrossing.
  *
@@ -38,7 +38,8 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.rangun.pandacrossing.IPandaCrossingModEventListener;
 import de.rangun.pandacrossing.PandaCrossingMod;
 import de.rangun.pandacrossing.config.ClothConfig2Utils;
-import de.rangun.pandacrossing.config.ConfigException;
+import de.rangun.pandacrossing.qr.ConfigException;
+import de.rangun.pandacrossing.qr.QRConfigurator;
 import de.rangun.pandacrossing.qr.QRGenerator;
 import de.rangun.pandacrossing.qr.QRGenerator.IBlockTraverser;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
@@ -64,8 +65,8 @@ public class QRCommand extends AbstractCommandBase
 	private final QRDirection dir;
 
 	public QRCommand(final PandaCrossingMod mod, Map<ICommandAsyncNotifier, Boolean> commandRunningMap,
-			final QRDirection dir) {
-		super(mod, commandRunningMap);
+			final QRDirection dir, final QRConfigurator conf) {
+		super(mod, commandRunningMap, conf);
 		this.dir = dir;
 
 		mod.registerCleanUpListener(this);
@@ -141,7 +142,7 @@ public class QRCommand extends AbstractCommandBase
 
 				try {
 
-					final BitMatrix matrix = QRGenerator.createQRCodeBitMatrix(txt, getDimension());
+					final BitMatrix matrix = QRGenerator.createQRCodeBitMatrix(txt, getDimension(), conf);
 					final Direction facing = player.getHorizontalFacing();
 
 					final ClothConfig2Utils ccu = PandaCrossingMod.hasClothConfig2() ? (new ClothConfig2Utils()) : null;
@@ -159,11 +160,11 @@ public class QRCommand extends AbstractCommandBase
 						}
 					}
 
-					PCUndoCommand.pushUndoMatrix(player, dir, facing, curPos, matrix);
+					PCUndoCommand.pushUndoMatrix(player, dir, facing, curPos, matrix, getXScale(), getYScale());
 					QRGenerator.traverseQRCode(new IBlockTraverser() {
 
 						@Override
-						public void traverse(int x, int y, boolean b) throws InterruptedException {
+						public final void traverse(int x, int y, boolean b) throws InterruptedException {
 
 							final BlockPos nextPos = nextPos(dir, facing, curPos, x, y);
 
@@ -195,6 +196,16 @@ public class QRCommand extends AbstractCommandBase
 									lock.unlock();
 								}
 							}
+						}
+
+						@Override
+						public final int getXScale() {
+							return QRCommand.super.getXScale();
+						}
+
+						@Override
+						public final int getYScale() {
+							return QRCommand.super.getYScale();
 						}
 
 					}, matrix);

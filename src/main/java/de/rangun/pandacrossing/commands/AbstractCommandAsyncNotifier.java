@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 by Heiko Schäfer <heiko@rangun.de>
+ * Copyright 2021-2022 by Heiko Schäfer <heiko@rangun.de>
  *
  * This file is part of PandaCrossing.
  *

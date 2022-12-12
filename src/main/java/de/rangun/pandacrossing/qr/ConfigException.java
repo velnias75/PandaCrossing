@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 by Heiko Schäfer <heiko@rangun.de>
+ * Copyright 2021-2022 by Heiko Schäfer <heiko@rangun.de>
  *
  * This file is part of PandaCrossing.
  *
@@ -17,7 +17,7 @@
  * along with PandaCrossing.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.rangun.pandacrossing.config;
+package de.rangun.pandacrossing.qr;
 
 public final class ConfigException extends Exception {
 

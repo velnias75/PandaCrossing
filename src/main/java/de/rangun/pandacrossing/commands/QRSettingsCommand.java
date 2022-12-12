@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 by Heiko Schäfer <heiko@rangun.de>
+ * Copyright 2022 by Heiko Schäfer <heiko@rangun.de>
  *
  * This file is part of PandaCrossing.
  *
@@ -19,13 +19,25 @@
 
 package de.rangun.pandacrossing.commands;
 
+import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import de.rangun.pandacrossing.config.ClothConfig2Utils;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
-import net.minecraft.text.Text;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 
-public interface ICommandAsyncNotifier {
-	String commandName();
+public final class QRSettingsCommand implements Command<FabricClientCommandSource> {
 
-	Text feedbackText(final CommandContext<FabricClientCommandSource> ctx);
+	@Override
+	public int run(final CommandContext<FabricClientCommandSource> ctx) throws CommandSyntaxException {
+
+		final Screen screen = (new ClothConfig2Utils()).getConfigScreen(null);
+		final MinecraftClient client = ctx.getSource().getClient();
+
+		client.send(() -> client.openScreen(screen));
+
+		return Command.SINGLE_SUCCESS;
+	}
 }

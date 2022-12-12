@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 by Heiko Schäfer <heiko@rangun.de>
+ * Copyright 2021-2022 by Heiko Schäfer <heiko@rangun.de>
  *
  * This file is part of PandaCrossing.
  *
@@ -33,6 +33,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import de.rangun.pandacrossing.IPandaCrossingModEventListener;
 import de.rangun.pandacrossing.PandaCrossingMod;
+import de.rangun.pandacrossing.qr.QRConfigurator;
 import de.rangun.pandacrossing.qr.QRGenerator;
 import de.rangun.pandacrossing.qr.QRGenerator.IBlockTraverser;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
@@ -64,13 +65,15 @@ public final class PCUndoCommand extends AbstractCommandBase
 		}
 	}
 
-	public PCUndoCommand(PandaCrossingMod mod, Map<ICommandAsyncNotifier, Boolean> commandRunningMap) {
-		super(mod, commandRunningMap);
+	public PCUndoCommand(PandaCrossingMod mod, Map<ICommandAsyncNotifier, Boolean> commandRunningMap,
+			final QRConfigurator conf) {
+		super(mod, commandRunningMap, conf);
 		mod.registerCleanUpListener(this);
 	}
 
 	public static void pushUndoMatrix(final ClientPlayerEntity player, final QRDirection dir, final Direction facing,
-			final BlockPos curPos, final BitMatrix matrix) throws InterruptedException {
+			final BlockPos curPos, final BitMatrix matrix, final int x_scale, final int y_scale)
+			throws InterruptedException {
 
 		undoMatrixStack.push(new Vector<Vector<UndoBlock>>(matrix.getHeight()));
 
@@ -79,7 +82,7 @@ public final class PCUndoCommand extends AbstractCommandBase
 			final World world = player.getEntityWorld();
 
 			@Override
-			public void traverse(int x, int y, boolean b) {
+			public final void traverse(int x, int y, boolean b) {
 
 				final BlockPos nextPos = nextPos(dir, facing, curPos, x, y);
 
@@ -88,6 +91,16 @@ public final class PCUndoCommand extends AbstractCommandBase
 
 				row = undoMatrixStack.peek().get(y);
 				row.add(new UndoBlock(nextPos, world.getBlockState(nextPos)));
+			}
+
+			@Override
+			public final int getXScale() {
+				return x_scale;
+			}
+
+			@Override
+			public final int getYScale() {
+				return y_scale;
 			}
 
 		}, matrix);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 by Heiko Schäfer <heiko@rangun.de>
+ * Copyright 2021-2022 by Heiko Schäfer <heiko@rangun.de>
  *
  * This file is part of PandaCrossing.
  *
@@ -23,7 +23,8 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import de.rangun.pandacrossing.config.ConfigException;
+import de.rangun.pandacrossing.qr.ConfigException;
+import de.rangun.pandacrossing.qr.QRConfigurator;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
@@ -32,8 +33,8 @@ import net.minecraft.util.Formatting;
 
 public final class QRCommandUsage extends AbstractQRStatsCommandBase implements Command<FabricClientCommandSource> {
 
-	public QRCommandUsage() {
-		super();
+	public QRCommandUsage(final QRConfigurator conf) {
+		super(conf);
 	}
 
 	@Override
@@ -47,14 +48,14 @@ public final class QRCommandUsage extends AbstractQRStatsCommandBase implements 
 					.append("\n")
 					.append(new LiteralText(" creates a ca. " + dimension(rd)
 							+ " (depending on [text]) blocks horizontal concrete QR code with the bottom left corner below the player\'s feet, representing ")
-									.formatted(Formatting.GRAY)
-									.append(new LiteralText("text").formatted(Formatting.ITALIC)
-											.append(new LiteralText(".").append("\n")
-													.append(new LiteralText(" /qrundo").formatted(Formatting.YELLOW)
-															.formatted(Formatting.ITALIC)
-															.append(new LiteralText(" will undo the last creation.")
-																	.formatted(Formatting.RESET)
-																	.formatted(Formatting.GRAY))))));
+							.formatted(Formatting.GRAY)
+							.append(new LiteralText("text").formatted(Formatting.ITALIC)
+									.append(new LiteralText(".").append("\n")
+											.append(new LiteralText(" /qrundo").formatted(Formatting.YELLOW)
+													.formatted(Formatting.ITALIC)
+													.append(new LiteralText(" will undo the last creation.")
+															.formatted(Formatting.RESET)
+															.formatted(Formatting.GRAY))))));
 
 			final long ms = estimatedMilliseconds(rd);
 

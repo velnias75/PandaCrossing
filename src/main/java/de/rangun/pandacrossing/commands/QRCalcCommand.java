@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 by Heiko Schäfer <heiko@rangun.de>
+ * Copyright 2021-2022 by Heiko Schäfer <heiko@rangun.de>
  *
  * This file is part of PandaCrossing.
  *
@@ -25,7 +25,8 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import de.rangun.pandacrossing.config.ConfigException;
+import de.rangun.pandacrossing.qr.ConfigException;
+import de.rangun.pandacrossing.qr.QRConfigurator;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
@@ -38,8 +39,8 @@ public final class QRCalcCommand extends AbstractQRStatsCommandBase implements C
 	private int dim;
 	private long ms;
 
-	public QRCalcCommand(final ICommandAsyncListener l, boolean usePreset) {
-		super(l);
+	public QRCalcCommand(final ICommandAsyncListener l, boolean usePreset, final QRConfigurator conf) {
+		super(l, conf);
 		this.usePreset = usePreset;
 	}
 

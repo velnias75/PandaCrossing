@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 by Heiko Schäfer <heiko@rangun.de>
+ * Copyright 2022 by Heiko Schäfer <heiko@rangun.de>
  *
  * This file is part of PandaCrossing.
  *
@@ -17,15 +17,12 @@
  * along with PandaCrossing.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.rangun.pandacrossing.commands;
+package de.rangun.pandacrossing.qr;
 
-import com.mojang.brigadier.context.CommandContext;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
-import net.minecraft.text.Text;
+public interface QRConfigurator {
 
-public interface ICommandAsyncNotifier {
-	String commandName();
+	ErrorCorrectionLevel errorCorrectionLevel();
 
-	Text feedbackText(final CommandContext<FabricClientCommandSource> ctx);
 }
