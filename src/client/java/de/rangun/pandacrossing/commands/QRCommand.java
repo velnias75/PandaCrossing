@@ -22,7 +22,7 @@ package de.rangun.pandacrossing.commands;
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static net.minecraft.block.Blocks.BLACK_CONCRETE;
 import static net.minecraft.block.Blocks.WHITE_CONCRETE;
-import static net.minecraft.util.registry.Registry.BLOCK;
+import static net.minecraft.registry.Registries.BLOCK;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -44,6 +44,7 @@ import de.rangun.pandacrossing.qr.QRGenerator;
 import de.rangun.pandacrossing.qr.QRGenerator.IBlockTraverser;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.block.Block;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.text.Text;
@@ -165,13 +166,19 @@ public class QRCommand extends AbstractCommandBase
 						@Override
 						public final void traverse(int x, int y, boolean b) throws InterruptedException {
 
+							final ClientPlayNetworkHandler handler = ctx.getSource().getClient().getNetworkHandler();
+
+							if (handler == null) {
+								return;
+							}
+
 							final BlockPos nextPos = nextPos(dir, facing, curPos, x, y);
 
 							if (animationMode) {
 								player.setPos(nextPos.getX(), nextPos.getY() + 1, nextPos.getZ());
 							}
 
-							player.sendCommand((new StringBuilder("setblock ")).append(nextPos.getX()).append(' ')
+							handler.sendCommand((new StringBuilder("setblock ")).append(nextPos.getX()).append(' ')
 									.append(nextPos.getY()).append(' ').append(nextPos.getZ()).append(' ')
 									.append((b ? black_material : white_material))
 									.append(blockState(b ? black_material : white_material, facing)).append(" replace")

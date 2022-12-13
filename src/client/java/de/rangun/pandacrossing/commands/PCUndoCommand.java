@@ -19,7 +19,7 @@
 
 package de.rangun.pandacrossing.commands;
 
-import static net.minecraft.util.registry.Registry.BLOCK;
+import static net.minecraft.registry.Registries.BLOCK;
 
 import java.util.Map;
 import java.util.Stack;
@@ -38,6 +38,7 @@ import de.rangun.pandacrossing.qr.QRGenerator;
 import de.rangun.pandacrossing.qr.QRGenerator.IBlockTraverser;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.state.property.Property;
 import net.minecraft.text.Text;
@@ -104,7 +105,7 @@ public final class PCUndoCommand extends AbstractCommandBase
 		}, matrix);
 	}
 
-	private boolean popUndoMatrix(final ClientPlayerEntity player) throws InterruptedException {
+	private boolean popUndoMatrix(final ClientPlayNetworkHandler handler) throws InterruptedException {
 
 		if (!undoMatrixStack.isEmpty()) {
 
@@ -113,8 +114,7 @@ public final class PCUndoCommand extends AbstractCommandBase
 			for (final Vector<UndoBlock> v1 : undoMatrixStack.pop()) {
 
 				for (final UndoBlock v2 : v1) {
-
-					player.sendCommand("setblock " + v2.pos.getX() + " " + v2.pos.getY() + " " + v2.pos.getZ() + " "
+					handler.sendCommand("setblock " + v2.pos.getX() + " " + v2.pos.getY() + " " + v2.pos.getZ() + " "
 							+ BLOCK.getId(v2.state.getBlock()) + deserializeBlockState(v2.state) + " replace");
 
 					if (delay > 0) {
@@ -166,7 +166,7 @@ public final class PCUndoCommand extends AbstractCommandBase
 				notifyListenersRunning();
 
 				try {
-					undoSuccess = popUndoMatrix(ctx.getSource().getPlayer());
+					undoSuccess = popUndoMatrix(ctx.getSource().getClient().getNetworkHandler());
 				} catch (Exception e) {
 					ctx.getSource().sendFeedback(Text.literal(e.getMessage()).formatted(Formatting.DARK_RED)
 							.formatted(Formatting.BOLD).formatted(Formatting.ITALIC));

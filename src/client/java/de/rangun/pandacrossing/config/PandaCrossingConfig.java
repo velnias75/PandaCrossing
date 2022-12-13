@@ -21,9 +21,7 @@ package de.rangun.pandacrossing.config;
 
 import static net.minecraft.block.Blocks.BLACK_CONCRETE;
 import static net.minecraft.block.Blocks.WHITE_CONCRETE;
-import static net.minecraft.util.registry.Registry.BLOCK;
-
-import java.util.Set;
+import static net.minecraft.registry.Registries.BLOCK;
 
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
@@ -88,9 +86,5 @@ public final class PandaCrossingConfig implements ConfigData {
 	public boolean isValidMaterial(String material) {
 		final Identifier id = Identifier.tryParse(material);
 		return (id != null && BLOCK.containsId(id));
-	}
-
-	private Set<Integer> dims() {
-		return null;
 	}
 }
